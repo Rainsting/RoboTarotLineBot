@@ -1,7 +1,7 @@
 {
-  "name": "leoli",
-  "version": "0.2.0",
-  "description": "LeoLi Line Bot",
+  "name": "Steven",
+  "version": "0.1.0",
+  "description": "Steven Tarot Line Bot",
   "engines": {
     "node": "6.9.1"
   },
@@ -14,8 +14,8 @@
     "body-parser": "1.15.2"
   },
   "keywords": [
-    "LeoLi",
+    "Steven",
     "Line"
   ],
-  "license": "MIT"
+  "license": "Taiwan NO.1"
 }
