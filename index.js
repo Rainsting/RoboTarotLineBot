@@ -158,7 +158,6 @@ function parseInput(rplyToken, inputStr) {
         
         if (trigger != 'roll') return null;
         
-
       }
 
 function coc6(chack,text){
@@ -166,56 +165,56 @@ function coc6(chack,text){
 
 
           if (text == null ) {
-            if (temp == 100) return temp + '→啊！大失敗！';
-            if (temp <= chack) return temp + '→成功';
-            else return temp + '→失敗' ;
+            if (temp == 100) return temp + ' → 啊！大失敗！';
+            if (temp <= chack) return temp + ' → 成功';
+            else return temp + ' → 失敗' ;
           }
           else
     {
-            if (temp == 100) return temp + '→啊！大失敗！；' + text;
-            if (temp <= chack) return temp + '→成功；' + text;
-            else return temp + '→失敗；' + text;
+            if (temp == 100) return temp + ' → 啊！大失敗！；' + text;
+            if (temp <= chack) return temp + ' → 成功；' + text;
+            else return temp + ' → 失敗；' + text;
     }
 }        
         
 function coc7(chack,text){
   let temp = Dice(100);  
   if (text == null ) {
-    if (temp == 1) return temp + '→恭喜！大成功！';
-    if (temp == 100) return temp + '→啊！大失敗！';
-    if (temp <= chack/5) return temp + '→極限成功';
-    if (temp <= chack/2) return temp + '→困難成功';
-    if (temp <= chack) return temp + '→通常成功';
-    else return temp + '→失敗' ;
+    if (temp == 1) return temp + ' → 恭喜！大成功！';
+    if (temp == 100) return temp + ' → 啊！大失敗！';
+    if (temp <= chack/5) return temp + ' → 極限成功';
+    if (temp <= chack/2) return temp + ' → 困難成功';
+    if (temp <= chack) return temp + ' → 通常成功';
+    else return temp + ' → 失敗' ;
   }
   else
   {
-  if (temp == 1) return temp + '→恭喜！大成功！；' + text;
-  if (temp == 100) return temp + '→啊！大失敗！；' + text;
-  if (temp <= chack/5) return temp + '→極限成功；' + text;
-  if (temp <= chack/2) return temp + '→困難成功；' + text;
-  if (temp <= chack) return temp + '→通常成功；' + text;
-  else return temp + '→失敗；' + text;
+  if (temp == 1) return temp + ' → 恭喜！大成功！；' + text;
+  if (temp == 100) return temp + ' → 啊！大失敗！；' + text;
+  if (temp <= chack/5) return temp + ' → 極限成功；' + text;
+  if (temp <= chack/2) return temp + ' → 困難成功；' + text;
+  if (temp <= chack) return temp + ' → 通常成功；' + text;
+  else return temp + ' → 失敗；' + text;
   }
 }
         
 function coc7chack(temp,chack,text){
   if (text == null ) {
-    if (temp == 1) return temp + '→恭喜！大成功！';
-    if (temp == 100) return temp + '→啊！大失敗！';
-    if (temp <= chack/5) return temp + '→極限成功';
-    if (temp <= chack/2) return temp + '→困難成功';
-    if (temp <= chack) return temp + '→通常成功';
-    else return temp + '→失敗' ;
+    if (temp == 1) return temp + ' → 恭喜！大成功！';
+    if (temp == 100) return temp + ' → 啊！大失敗！';
+    if (temp <= chack/5) return temp + ' → 極限成功';
+    if (temp <= chack/2) return temp + ' → 困難成功';
+    if (temp <= chack) return temp + ' → 通常成功';
+    else return temp + ' → 失敗' ;
   }
 else
   {
-    if (temp == 1) return temp + '→恭喜！大成功！；' + text;
-    if (temp == 100) return temp + '→啊！大失敗！；' + text;
-    if (temp <= chack/5) return temp + '→極限成功；' + text;
-    if (temp <= chack/2) return temp + '→困難成功；' + text;
-    if (temp <= chack) return temp + '→通常成功；' + text;
-    else return temp + '→失敗；' + text;
+    if (temp == 1) return temp + ' → 恭喜！大成功！；' + text;
+    if (temp == 100) return temp + ' → 啊！大失敗！；' + text;
+    if (temp <= chack/5) return temp + ' → 極限成功；' + text;
+    if (temp <= chack/2) return temp + ' → 困難成功；' + text;
+    if (temp <= chack) return temp + ' → 通常成功；' + text;
+    else return temp + ' → 失敗；' + text;
   }
 }
 
@@ -234,7 +233,7 @@ function coc7bp (chack,bpdiceNum,text){
   countStr = countStr.substring(0, countStr.length - 1) 
     let countArr = countStr.split('、'); 
     
-  countStr = countStr + '→' + coc7chack(Math.min(...countArr),chack,text);
+  countStr = countStr + ' → ' + coc7chack(Math.min(...countArr),chack,text);
   return countStr;
   }
   
@@ -249,7 +248,7 @@ function coc7bp (chack,bpdiceNum,text){
     countStr = countStr.substring(0, countStr.length - 1) 
     let countArr = countStr.split('、'); 
 
-    countStr = countStr + '→' + coc7chack(Math.max(...countArr),chack,text);
+    countStr = countStr + ' → ' + coc7chack(Math.max(...countArr),chack,text);
     return countStr;
   }
   
@@ -265,74 +264,73 @@ function ArrMax (Arr){
   return max;
 }
         
-function MutiRollDice(DiceToCal,timesNum,text){
-  let cuntSplitor = '+';
-  let comSplitor = 'd';
-  let CuntArr = DiceToCal.split(cuntSplitor);
-  let numMax = CuntArr.length - 1 ; //設定要做的加法的大次數
 
-  var count = 0;
-  let countStr = '';
-  if (DiceToCal.match('D') != null) return randomReply() + '\n格式錯啦，d要小寫！';
-  
-  if (text == null) {
-  for (let j = 1 ; j <= timesNum ; j++){
-    count = 0;
-      for (let i = 0; i <= numMax; i++) {
-          
-          let commandArr = CuntArr[i].split(comSplitor);
-          let countOfNum = commandArr[0];
-          let randomRange = commandArr[1];
-          if (randomRange == null) {
-              let temp = parseInt(countOfNum);
-              //countStr = countStr + temp + '+';
-              count += temp; 
-            }
-          else{
-              
-              for (let idx = 1; idx <= countOfNum; idx ++) {
-                  let temp = Dice(randomRange);
+        function MutiRollDice(DiceToCal,timesNum,text){
+          let cuntSplitor = '+';
+          let comSplitor = 'd';
+          let CuntArr = DiceToCal.split(cuntSplitor);
+          let numMax = CuntArr.length - 1 ; //設定要做的加法的大次數
+
+          var count = 0;
+          let countStr = '';
+          if (DiceToCal.match('D') != null) return randomReply() + '\n格式錯啦，d要小寫！';
+
+          if (text == null) {
+            for (let j = 1 ; j <= timesNum ; j++){
+              count = 0;
+              for (let i = 0; i <= numMax; i++) {
+
+                let commandArr = CuntArr[i].split(comSplitor);
+                let countOfNum = commandArr[0];
+                let randomRange = commandArr[1];
+                if (randomRange == null) {
+                  let temp = parseInt(countOfNum);
                   //countStr = countStr + temp + '+';
                   count += temp; 
                 }
+                else{
+
+                  for (let idx = 1; idx <= countOfNum; idx ++) {
+                    let temp = Dice(randomRange);
+                    //countStr = countStr + temp + '+';
+                    count += temp; 
+                  }
+                }
+              }
+              countStr = countStr + count + '、';
             }
-        }
-    countStr = countStr + count + '；';
-}
-  countStr = countStr.substring(0, countStr.length - 1) ;
-  return countStr;
-  }
-  
-  if (text != null) {
-    for (let j = 1 ; j <= timesNum ; j++){
-      count = 0;
-      for (let i = 0; i <= numMax; i++) {
+            countStr = countStr.substring(0, countStr.length - 1) ;
+            return countStr;
+          }
 
-        let commandArr = CuntArr[i].split(comSplitor);
-        let countOfNum = commandArr[0];
-        let randomRange = commandArr[1];
-        if (randomRange == null) {
-          let temp = parseInt(countOfNum);
-          //countStr = countStr + temp + '+';
-          count += temp; 
-        }
-        else{
+          if (text != null) {
+            for (let j = 1 ; j <= timesNum ; j++){
+              count = 0;
+              for (let i = 0; i <= numMax; i++) {
 
-          for (let idx = 1; idx <= countOfNum; idx ++) {
-            let temp = Dice(randomRange);
-            //countStr = countStr + temp + '+';
-            count += temp; 
+                let commandArr = CuntArr[i].split(comSplitor);
+                let countOfNum = commandArr[0];
+                let randomRange = commandArr[1];
+                if (randomRange == null) {
+                  let temp = parseInt(countOfNum);
+                  //countStr = countStr + temp + '+';
+                  count += temp; 
+                }
+                else{
+
+                  for (let idx = 1; idx <= countOfNum; idx ++) {
+                    let temp = Dice(randomRange);
+                    //countStr = countStr + temp + '+';
+                    count += temp; 
+                  }
+                }
+              }
+              countStr = countStr + count + '、';
+            }
+            countStr = countStr.substring(0, countStr.length - 1) + '；' + text;
+            return countStr;
           }
         }
-      }
-      countStr = countStr + count + '；';
-    }
-    countStr = countStr + text;
-    return countStr;
-  }
-  
-  
-}        
         
         
 function NomalRollDice(DiceToCal,text){
