@@ -1,6 +1,6 @@
 {
-  "name": "Steven",
-  "version": "0.2.0",
+  "name": "TarotLineBot",
+  "version": "0.3.0",
   "description": "Steven Tarot Line Bot",
   "engines": {
     "node": "6.9.1"
@@ -15,6 +15,7 @@
   },
   "keywords": [
     "Steven",
+    "Tarot",
     "Line"
   ],
   "license": "Taiwan NO.1"

@@ -90,13 +90,15 @@ function parseInput(rplyToken, inputStr) {
 	_isNaN = function(obj) {
 			return isNaN(parseInt(obj));
 		}
-		//yabaso指令開始於此
-	if (inputStr.match('鴨霸獸') != null) {
+	
+	//關鍵字指令開始於此
+	if (inputStr.match('史帝分') != null || inputStr.match('遠坂凜') != null) {
 		if (inputStr.match('說明') != null)
 			return displayUsage(1);
 		else
-			return randomYabasoReply();
+			return randomDuelReply();
 	}
+	if (inputStr.match('鴨霸獸') != null || inputStr.match('甲鳥巴') != null) return randomYabasoReply();
 	if (inputStr.match('車干哥') != null) return randomBirdReply();
 	if (inputStr.match('軒哥') != null && mainMsg[1] == '決鬥') return randomDuelReply();
 
@@ -121,6 +123,16 @@ function parseInput(rplyToken, inputStr) {
 		return coc6(parseInt(inputStr.split('=')[1]), cctext);
 	}
 
+	//丟杯 cup 指令開始於此
+	if (inputStr.match('cup') != null) {
+		let cuptext = null;
+		if (mainMsg[1] != undefined) 
+		{
+			if (mainMsg[1] == '說明') return displayUsage(4);
+			cuptext = mainMsg[1];
+		}
+		return NormalDrawCup(trigger, cuptext);
+	}
 
 	//roll 指令開始於此
 	if (trigger == 'roll') {
@@ -181,13 +193,16 @@ function parseInput(rplyToken, inputStr) {
 			return MultiDrawTarot(mainMsg[1], mainMsg[2], 3); //預設抽 79 張
 		}
 
-	} else
+	}
+	else
 		return null;
 	// if (trigger != 'roll') return null;
 
-
 }
 
+////////////////////////////////////////
+//////////////// COC
+////////////////////////////////////////
 function coc6(chack, text) {
 	let temp = Dice(100);
 
@@ -275,122 +290,6 @@ function coc7bp(chack, bpdiceNum, text) {
 
 }
 
-function ArrMax(Arr) {
-	var max = this[0];
-	this.forEach(function(ele, index, arr) {
-		if (ele > max) {
-			max = ele;
-		}
-	})
-	return max;
-}
-
-function MutiRollDice(DiceToCal, timesNum, text) {
-	let cuntSplitor = '+';
-	let comSplitor = 'd';
-	let CuntArr = DiceToCal.split(cuntSplitor);
-	let numMax = CuntArr.length - 1; //設定要做的加法的大次數
-
-	var count = 0;
-	let countStr = '';
-	if (DiceToCal.match('D') != null) return randomYabasoReply() + '\n格式錯啦，d要小寫！';
-
-	if (text == null) {
-		for (let j = 1; j <= timesNum; j++) {
-			count = 0;
-			for (let i = 0; i <= numMax; i++) {
-
-				let commandArr = CuntArr[i].split(comSplitor);
-				let countOfNum = commandArr[0];
-				let randomRange = commandArr[1];
-				if (randomRange == null) {
-					let temp = parseInt(countOfNum);
-					//countStr = countStr + temp + '+';
-					count += temp;
-				} else {
-
-					for (let idx = 1; idx <= countOfNum; idx++) {
-						let temp = Dice(randomRange);
-						//countStr = countStr + temp + '+';
-						count += temp;
-					}
-				}
-			}
-			countStr = countStr + count + '；';
-		}
-		countStr = countStr.substring(0, countStr.length - 1);
-		return countStr;
-	}
-
-	if (text != null) {
-		for (let j = 1; j <= timesNum; j++) {
-			count = 0;
-			for (let i = 0; i <= numMax; i++) {
-
-				let commandArr = CuntArr[i].split(comSplitor);
-				let countOfNum = commandArr[0];
-				let randomRange = commandArr[1];
-				if (randomRange == null) {
-					let temp = parseInt(countOfNum);
-					//countStr = countStr + temp + '+';
-					count += temp;
-				} else {
-
-					for (let idx = 1; idx <= countOfNum; idx++) {
-						let temp = Dice(randomRange);
-						//countStr = countStr + temp + '+';
-						count += temp;
-					}
-				}
-			}
-			countStr = countStr + count + '；';
-		}
-		countStr = countStr.substring(0, countStr.length - 1) + '；' + text;
-		return countStr;
-	}
-
-}
-
-
-function NomalRollDice(DiceToCal, text) {
-	let cuntSplitor = '+';
-	let comSplitor = 'd';
-	let CuntArr = DiceToCal.split(cuntSplitor);
-	let numMax = CuntArr.length - 1; //設定要做的加法的大次數
-
-	var count = 0;
-	let countStr = '';
-	if (DiceToCal.match('D') != null) return randomYabasoReply() + '\n格式錯啦，d要小寫！';
-	for (let i = 0; i <= numMax; i++) {
-
-		let commandArr = CuntArr[i].split(comSplitor);
-		let countOfNum = commandArr[0];
-		let randomRange = commandArr[1];
-		if (randomRange == null) {
-			let temp = parseInt(countOfNum);
-			countStr = countStr + temp + '+';
-			count += temp;
-		} else {
-
-			for (let idx = 1; idx <= countOfNum; idx++) {
-				let temp = Dice(randomRange);
-				countStr = countStr + temp + '+';
-				count += temp;
-			}
-		}
-	}
-
-	if (countStr.split(cuntSplitor).length == 2) {
-		if (text == null) countStr = count;
-		else countStr = count + '；' + text;
-	} else {
-		if (text == null) countStr = countStr.substring(0, countStr.length - 1) + '=' + count;
-		else countStr = countStr.substring(0, countStr.length - 1) + '=' + count + '；' + text;
-	}
-	return countStr;
-
-}
-
 function CreateCoC7Card(DiceToCal, text) {
 	let returnStr = '';
 	let dicecount = 0;
@@ -472,7 +371,162 @@ function CreateCoC6Card(DiceToCal, text) {
 	return returnStr;
 }
 
+function MutiRollDice(DiceToCal, timesNum, text) {
+	let cuntSplitor = '+';
+	let comSplitor = 'd';
+	let CuntArr = DiceToCal.split(cuntSplitor);
+	let numMax = CuntArr.length - 1; //設定要做的加法的大次數
 
+	var count = 0;
+	let countStr = '';
+	if (DiceToCal.match('D') != null) return randomYabasoReply() + '\n格式錯啦，d要小寫！';
+
+	if (text == null) {
+		for (let j = 1; j <= timesNum; j++) {
+			count = 0;
+			for (let i = 0; i <= numMax; i++) {
+
+				let commandArr = CuntArr[i].split(comSplitor);
+				let countOfNum = commandArr[0];
+				let randomRange = commandArr[1];
+				if (randomRange == null) {
+					let temp = parseInt(countOfNum);
+					//countStr = countStr + temp + '+';
+					count += temp;
+				} else {
+
+					for (let idx = 1; idx <= countOfNum; idx++) {
+						let temp = Dice(randomRange);
+						//countStr = countStr + temp + '+';
+						count += temp;
+					}
+				}
+			}
+			countStr = countStr + count + '；';
+		}
+		countStr = countStr.substring(0, countStr.length - 1);
+		return countStr;
+	}
+
+	if (text != null) {
+		for (let j = 1; j <= timesNum; j++) {
+			count = 0;
+			for (let i = 0; i <= numMax; i++) {
+
+				let commandArr = CuntArr[i].split(comSplitor);
+				let countOfNum = commandArr[0];
+				let randomRange = commandArr[1];
+				if (randomRange == null) {
+					let temp = parseInt(countOfNum);
+					//countStr = countStr + temp + '+';
+					count += temp;
+				} else {
+
+					for (let idx = 1; idx <= countOfNum; idx++) {
+						let temp = Dice(randomRange);
+						//countStr = countStr + temp + '+';
+						count += temp;
+					}
+				}
+			}
+			countStr = countStr + count + '；';
+		}
+		countStr = countStr.substring(0, countStr.length - 1) + '；' + text;
+		return countStr;
+	}
+
+}
+
+function NomalRollDice(DiceToCal, text) {
+	let cuntSplitor = '+';
+	let comSplitor = 'd';
+	let CuntArr = DiceToCal.split(cuntSplitor);
+	let numMax = CuntArr.length - 1; //設定要做的加法的大次數
+
+	var count = 0;
+	let countStr = '';
+	if (DiceToCal.match('D') != null) return randomYabasoReply() + '\n格式錯啦，d要小寫！';
+	for (let i = 0; i <= numMax; i++) {
+
+		let commandArr = CuntArr[i].split(comSplitor);
+		let countOfNum = commandArr[0];
+		let randomRange = commandArr[1];
+		if (randomRange == null) {
+			let temp = parseInt(countOfNum);
+			countStr = countStr + temp + '+';
+			count += temp;
+		} else {
+
+			for (let idx = 1; idx <= countOfNum; idx++) {
+				let temp = Dice(randomRange);
+				countStr = countStr + temp + '+';
+				count += temp;
+			}
+		}
+	}
+
+	if (countStr.split(cuntSplitor).length == 2) {
+		if (text == null) countStr = count;
+		else countStr = count + '；' + text;
+	} else {
+		if (text == null) countStr = countStr.substring(0, countStr.length - 1) + '=' + count;
+		else countStr = countStr.substring(0, countStr.length - 1) + '=' + count + '；' + text;
+	}
+	return countStr;
+
+}
+
+////////////////////////////////////////
+//////////////// Cup
+////////////////////////////////////////
+function NormalDrawCup(chack, text) {
+	let returnStr = '';	//1為陽, 0為陰, 2定為中性
+
+	var result_left = [];
+	var result_right = [];
+	var cup_yes = 0, cup_no = 0, cup_laugh = 0, cup_null = 0, cup_else = 0;
+	// var max = 0;
+
+	for (var i = 0; i < 3; i++) //丟三次
+	{
+		result_left[i] = Cup(3);
+		result_right[i] = Cup(3);
+
+		if (result_left[i] == 0 && result_right[i] == 0) cup_no ++;
+		if (result_left[i] == 0 && result_right[i] == 1) cup_yes ++;
+		if (result_left[i] == 1 && result_right[i] == 0) cup_yes ++;
+		if (result_left[i] == 1 && result_right[i] == 1) cup_laugh ++;
+		if (result_left[i] == 2 && result_right[i] == 2) cup_null ++;
+		// else cup_else ++;
+	}
+
+	// max = Math.max(cup_no, cup_yes, cup_laugh, cup_null, cup_else);
+	// returnStr = cup_no + ' ' + cup_yes + ' ' + cup_laugh + ' ' + cup_null + '\n';
+
+	if (text != null)
+	{
+		if (cup_no >= 2) returnStr += '蓋杯' + ' ; ' + text;
+		else if (cup_yes >= 2) returnStr += '聖杯' + ' ; ' + text;
+		else if (cup_laugh >= 2) returnStr += '笑杯' + ' ; ' + text;
+		else if (cup_null == 3) returnStr += '立杯' + ' ; ' + text;
+		else returnStr += '沒杯' + ' ; ' + text;
+	}
+	else
+	{
+		if (cup_no >= 2) returnStr += '蓋杯';
+		else if (cup_yes >= 2) returnStr += '聖杯';
+		else if (cup_laugh >= 2) returnStr += '笑杯';
+		else if (cup_null == 3) returnStr += '立杯';		
+		else returnStr += '沒杯';
+	}
+	
+	return returnStr;
+}
+
+
+////////////////////////////////////////
+//////////////// Tarot
+////////////////////////////////////////
 function MultiDrawTarot(CardToCal, text, type) {
 	let returnStr = '';
 	var tmpcard = 0;
@@ -581,14 +635,6 @@ function NomalDrawTarot(CardToCal, text) {
 	return returnStr;
 }
 
-function Dice(diceSided) {
-	return Math.floor((Math.random() * diceSided) + 1)
-}
-
-function Tarot(diceSided) {
-	return Math.floor((Math.random() * diceSided)) //塔羅，從0開始
-}
-
 function tarotRevReply(count) {
 	let returnStr = '';
 
@@ -691,6 +737,34 @@ function tarotCardReply(count) {
 
 }
 
+function Cup(diceSided) {
+	return Math.floor((Math.random() * diceSided)) //丟杯：聖杯、笑杯、蓋杯、立杯、沒杯
+}
+
+function Tarot(diceSided) {
+	return Math.floor((Math.random() * diceSided)) //塔羅，從0開始
+}
+
+
+function Dice(diceSided) {
+	return Math.floor((Math.random() * diceSided) + 1)
+}
+
+
+function ArrMax(Arr) {
+	var max = this[0];
+	this.forEach(function(ele, index, arr) {
+		if (ele > max) {
+			max = ele;
+		}
+	})
+	return max;
+}
+
+
+////////////////////////////////////////
+//////////////// Usage
+////////////////////////////////////////
 function displayUsage(usage) {
 	let returnStr = '';
 
@@ -710,8 +784,11 @@ function displayUsage(usage) {
 \n → tarot time/時間 (問題) \
 \n → tarot cross/大十字 (問題) \
 \n \
+\n擲筊範例: \
+\n → cup (問題) \
+\n \
 \n另外支援隱藏關鍵字: \
-\n → 鴨霸獸/車干哥/軒哥 決鬥/tarot 抽牌 等等... \
+\n → 遠坂凜/鴨霸獸/車干哥/軒哥 決鬥/tarot 抽牌 等等... \
 \n \
 \n我到底在寫尛';
 
@@ -725,6 +802,11 @@ function displayUsage(usage) {
 \n時間之流: 79 張，請用 tarot time/時間 (問題) \
 \n大十字: 79 張，請用 tarot cross/大十字 (問題) \
 \n儘管玩玩看';
+
+	if (usage == 4)
+		returnStr = '常見的擲筊 \
+\n請用 丟杯/擲筊/cup (問題) \
+\n會出現聖杯、笑杯、蓋杯、沒杯與立杯等結果';
 
 	return returnStr;
 }
@@ -755,44 +837,55 @@ function randomDuelReply() {
 function randomBirdReply() { //軒哥
 	let rplyArr = [
 		'說你愛我 <3',
-		'放下課本趕快來跑團！',
+		'放下本本趕快來跑團！',
 		'欸 (?',
 		'邊緣人嗚嗚',
 		'好啊都這樣',
 		'你是不是覺得我很帥',
 		'妥妥的',
-		'ㄍㄌㄇㄉ',
 		'ㄍㄋㄇㄉ',
 		'鴨巴我愛妳',
 		'WTF',
-		'我到底看了什麼',
+		'我到底看了殺小',
 		'共三小',
 		'這我一定吉',
 		'貴圈真亂',
-		'你看看你'
+		'不跟你說☆',
+		'你看看你',
+		'愉悅',
+		'怪我囉 (?',
+		'矮額',
+		'你是不是愛上我了',
 	];
 	return rplyArr[Math.floor((Math.random() * (rplyArr.length)) + 0)];
 }
 
 function randomYabasoReply() {
 	let rplyArr = [
-		'你們死定了呃呃呃不要糾結這些……所以是在糾結哪些？',
-		'在澳洲，每過一分鐘就有一隻鴨嘴獸被拔嘴。 \n我到底在共三小。',
-		'嗚噁噁噁噁噁噁，不要隨便叫我。',
+		'你們死定了',
+		'我到底在共三小',
+		'什麼東西你共三小',
 		'幹，你這學不會的豬！',
-		'嘎嘎嘎。',
-		'wwwwwwwwwwwwwwwww',
-		'為什麼你們每天都可以一直玩；玩就算了還玩我。',
-		'好棒，整點了！咦？不是嗎？',
+		'嘎嘎嘎',
+		'wwwww',
+		'為什麼你們每天都可以一直玩',
 		'不要打擾我挖坑！',
-		'好棒，誤點了！',
-		'在南半球，一隻鴨嘴獸拍打他的鰭，他的嘴就會掉下來。 \n我到底在共三小。',
-		'什麼東西你共三小。',
-		'哈哈哈哈哈哈哈哈！',
-		'一直叫，你4不4想拔嘴人家？',
+		'好嘲諷',
+		'哈哈哈哈哈',
+		'你4不4想拔嘴人家？',
 		'一直叫，你想被淨灘嗎？',
 		'懶~洋~洋~',
-		'幫主你也敢嘴？'
+		'巴魯斯',
+		'骰都骰',
+		'軒哥我愛你',
+		'怎，怎麼可能',
+		'欸欸(?',
+		'噁噁噁噁',
+		'我要讓你們血。染。沙。灘',
+		'oao',
 	];
 	return rplyArr[Math.floor((Math.random() * (rplyArr.length)) + 0)];
 }
+
+
+
