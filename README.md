@@ -10,6 +10,8 @@ TarotLineBot
         *   [cc(N) 獎勵骰](#award)
         *   [roll  直接丟骰子](#roll)
         *   [支援快速產生六版](#createcoc6) / [七版角色卡數值](#createcoc7)
+    *   [NC](#nechronica)
+        *   [1NC/4NC+2 擲骰介紹](#ncdice)
 *   [占卜](#divine)
     *   [塔羅牌](#tarot)
         *   [tarot daily/draw/每日/運勢 (問題)](#daily)
@@ -28,6 +30,8 @@ TarotLineBot
 <h1 id="trpg">TRPG</h1>
 
 此處包含了 TRPG (Tabletop Role Playing Game) 會使用到的常見擲骰功能。
+
+目前已支援 CoC 與 NC 骰子囉。（但是我沒玩過 DX 所以就不會寫...）
 
 
 <h2 id="coc">CoC</h2>
@@ -143,6 +147,36 @@ CoC 七版擲骰語法，語法為，問題可為空白：
     EDU: 85
     LUK: 10
     
+* * *
+
+<h2 id="nechronica">NC</h2>
+
+NC 中文翻譯名為**死靈年代記之永遠的後日談**，相關資料請[上網查詢][]。
+
+[上網查詢]:https://sites.google.com/site/nechronicaintaiwan/
+    
+    
+<h3 id="ncdice">NC 擲骰介紹</h3>
+
+此版本已提供 NC 常見的擲骰功能囉（格式則參考跑團平台──凍豆腐）。
+如要擲骰的話請參照下列格式：
+
+    (骰數)NC/NA (問題)
+    
+比方說：
+
+    1NC
+    7[7] → 成功
+    
+    4nc-2
+    5[2,1,5,0] → 大失敗
+    
+    1NA+2 反物資
+    6[6] → 成功 ; 反物資
+    
+已支援同時大小寫判斷。
+
+
 * * *
 
 

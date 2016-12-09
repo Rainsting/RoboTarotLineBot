@@ -92,7 +92,7 @@ function parseInput(rplyToken, inputStr) {
 		}
 	
 	//關鍵字指令開始於此
-	if (inputStr.match('史帝分') != null || inputStr.match('遠坂凜') != null) {
+	if (inputStr.match('遠坂凜') != null || inputStr.match('凜') != null) {
 		if (inputStr.match('說明') != null)
 			return displayUsage(1);
 		else
@@ -121,6 +121,17 @@ function parseInput(rplyToken, inputStr) {
 		let cctext = null;
 		if (mainMsg[1] != undefined) cctext = mainMsg[1];
 		return coc6(parseInt(inputStr.split('=')[1]), cctext);
+	}
+
+	//nc指令開始於此
+	if (trigger.match('NC') != null || trigger.match('nc') != null || trigger.match('NA') != null || trigger.match('na') != null) {
+		let nctext = null;
+		if (mainMsg[1] != undefined) 
+		{
+			if (mainMsg[1] == '說明') return displayUsage(5);
+			nctext = mainMsg[1];
+		}
+		return nechronica(trigger, nctext);
 	}
 
 	//丟杯 cup 指令開始於此
@@ -163,7 +174,7 @@ function parseInput(rplyToken, inputStr) {
 	}
 
 	//tarot 指令
-	else if (trigger == 'tarot') {
+	else if (trigger == 'tarot' || trigger == 'Tarot') {
 
 		if (inputStr.split(msgSplitor).length == 1) return displayUsage(3);
 
@@ -198,6 +209,63 @@ function parseInput(rplyToken, inputStr) {
 		return null;
 	// if (trigger != 'roll') return null;
 
+}
+
+////////////////////////////////////////
+//////////////// nechronica (NC)
+////////////////////////////////////////
+function nechronica(triggermsg ,text) {
+	let returnStr = '';
+	var ncarray = [];
+	var dicemax = 0, dicemin = 0, dicenew = 0;
+
+	var match = /^(\d+)(NC|NA)((\+|-)(\d+)|)$/i.exec(triggermsg);	//判斷式
+
+	if (Number(match[1]) < 1 || Number(match[1]) > 4)	//限制在 1-4 顆骰子之間
+	{
+		returnStr = '格式不對，請重新輸入';
+		return returnStr;
+	}
+
+	for (var i = 0; i < Number(match[1]); i++)	//其實我不太會用 for each
+	{
+		dicenew = Dice(10) + Number(match[3]);
+		ncarray.push(dicenew);
+	}
+
+	dicemax = Math.max(...ncarray);	//判斷最大最小值
+	dicemin = Math.min(...ncarray);
+
+	if (Number(match[1]) == 1)
+		returnStr += dicemax + '[' + ncarray.pop() + ']'; 
+	else
+	{
+		returnStr += dicemax + '[';
+		for (i = 0; i < Number(match[1]); i++)
+		{
+			if (i != Number(match[1]) - 1)
+				returnStr += ncarray.pop() + ',';
+			else
+				returnStr += ncarray.pop();
+		}
+		returnStr += ']';
+	}
+
+	if (dicemax > 5)
+		if (dicemax > 10)
+			returnStr += ' → 大成功';
+		else
+			returnStr += ' → 成功';
+	else
+		if (dicemin <= 1)
+			returnStr += ' → 大失敗';
+		else
+			returnStr += ' → 失敗';
+
+	if (text != null)
+		returnStr += ' ; ' + text;
+
+	return returnStr;
 }
 
 ////////////////////////////////////////
@@ -770,7 +838,7 @@ function displayUsage(usage) {
 
 	if (usage == 1)
 		returnStr = '原本這是塔羅機器人，但額外支援擲骰功能， \
-\n擲骰範例 (都是小寫): \
+\nCoC 擲骰範例 (都是小寫): \
 \n → ccb   六版擲骰 \
 \n → cc    七版擲骰 \
 \n → cc(N) 獎勵骰 \
@@ -778,6 +846,10 @@ function displayUsage(usage) {
 \n \
 \n支援速產 CoC 角卡:\
 \n → roll 六版角卡/七版角卡 \
+\n \
+\nNC 擲骰範例: \
+\n → 1NA (問題) \
+\n → 4NC+2 (問題) \
 \n \
 \n塔羅範例: \
 \n → tarot daily/draw/每日/運勢 (問題) \
@@ -788,7 +860,7 @@ function displayUsage(usage) {
 \n → cup (問題) \
 \n \
 \n另外支援隱藏關鍵字: \
-\n → 遠坂凜/鴨霸獸/車干哥/軒哥 決鬥/tarot 抽牌 等等... \
+\n → 凜/甲鳥巴/車干哥/tarot 抽牌 等等... \
 \n \
 \n我到底在寫尛';
 
@@ -807,6 +879,11 @@ function displayUsage(usage) {
 		returnStr = '常見的擲筊 \
 \n請用 丟杯/擲筊/cup (問題) \
 \n會出現聖杯、笑杯、蓋杯、沒杯與立杯等結果';
+
+	if (usage == 5)
+		returnStr = '支援 NC 擲骰囉 \
+\n請用基本 1NA/4NC+2 (問題) 之類的來丟\
+\n大小寫都可以';
 
 	return returnStr;
 }
@@ -829,7 +906,6 @@ function randomDuelReply() {
 		'覆蓋一張牌，結束這回合',
 		'全速前進DA',
 		'星爆☆氣流斬☆',
-
 	];
 	return rplyArr[Math.floor((Math.random() * (rplyArr.length)) + 0)];
 }
@@ -883,6 +959,9 @@ function randomYabasoReply() {
 		'噁噁噁噁',
 		'我要讓你們血。染。沙。灘',
 		'oao',
+		'（登愣',
+		'耶欸～<3',
+		'想廢廢的',
 	];
 	return rplyArr[Math.floor((Math.random() * (rplyArr.length)) + 0)];
 }
