@@ -1,4 +1,4 @@
-TarotLineBot v0.5.0
+TarotLineBot v0.5.1
 ==================
 
 這是一個 LINE 專用的自動占卜 & TRPG 擲骰機器人，支援如下功能：
@@ -11,18 +11,18 @@ TarotLineBot v0.5.0
         *   [cc>     幕間成長](#growup)
         *   [直接丟骰子](#roll)
         *   [多筆輸出](#multidice)
-        *   ~~[支援快速產生六版](#createcoc6) / [七版角色卡數值](#createcoc7)~~
     *   [NC](#nechronica)
         *   [1NC/4NC+2 擲骰介紹](#ncdice)
 *   [占卜](#divine)
     *   [塔羅牌](#tarot)
-        *   [tarot daily/draw/每日/運勢 (問題)](#daily)
+        *   [tarot daily/每日 (問題)](#daily)
         *   [tarot time/時間 (問題)](#time)
         *   [tarot cross/大十字 (問題)](#cross)
     *   [擲筊](#baobei)
         *   [cup (問題)](#cup)
 *   [其他廢廢功能](#whatsthis)
     *   [隱藏關鍵字 (群組歡樂用)](#happyline)
+    *   [猜拳](#rockpaperscissors)
 *  [特別感謝](#acknowledgement)
 
 
@@ -122,57 +122,14 @@ CoC 七版擲骰語法，語法為，問題可為空白：
     7# (6+3+3) = 12
      
     
-<h3 id="createcoc6">快速產生 CoC 6th 角卡</h3>
-
-語法為，問題同樣可為空白：
-
-    roll 六版角卡 (要填的話、角色名稱)
-    
-比方說：
-
-    roll 六版角卡 Steven
-    
-    Steven:
-    STR: 6+2+3=11
-    CON: 6+1+2=9
-    POW: 5+4+3=12
-    DEX: 3+2+4=9
-    APP: 1+2+6=9
-    SIZ: 5+1+6=12
-    INT: 5+6+6=17
-    EDU: 1+1+3=5
-    
-看起來廢廢的。
-    
-
-<h3 id="createcoc7">快速產生 CoC 7th 角卡</h3>
-
-同樣地語法為，問題同樣可為空白：
-
-    roll 七版角卡 (要填的話、角色名稱)
-    
-比方說：
-
-    roll 七版角卡 Steven
-    
-    Steven:
-    STR: 50
-    CON: 65
-    POW: 55
-    DEX: 35
-    APP: 65
-    SIZ: 50
-    INT: 65
-    EDU: 85
-    LUK: 10
-    
 * * *
+
 
 <h2 id="nechronica">NC</h2>
 
-NC 中文翻譯名為**死靈年代記之永遠的後日談**，相關資料請[上網查詢][]。
+NC 中文翻譯名為**死靈年代記之永遠的後日談**，相關資料請查閱[相關資源][]。
 
-[上網查詢]:https://sites.google.com/site/nechronicaintaiwan/
+[相關資源]:https://sites.google.com/site/nechronicaintaiwan/
     
     
 <h3 id="ncdice">NC 擲骰介紹</h3>
@@ -306,6 +263,8 @@ NC 中文翻譯名為**死靈年代記之永遠的後日談**，相關資料請[上網查詢][]。
 * 沒杯：不想回答、不置可否、問的問題太過偏遠、不切實際。
 * 立杯：哈哈神祕現象哈哈，請自行解讀。
 
+如果出現了三聖/笑/蓋杯，那就表示所得結果很穩定呢！
+
 
 <h3 id="cup">來丟個杯吧</h3>
 
@@ -369,6 +328,7 @@ NC 中文翻譯名為**死靈年代記之永遠的後日談**，相關資料請[上網查詢][]。
 
 
 * * *
+
 
 <h2 id="acknowledgement">感謝</h2>
 

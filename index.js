@@ -106,27 +106,6 @@ function parseInput(rplyToken, inputStr) {
 		return randomBirdReply(inputStr);
 	// if (inputStr.match('軒哥') != null && mainMsg[1] == '決鬥') return randomDuelReply(inputStr);
 
-	// //cc指令開始於此
-	// if (inputStr.split('=')[0] == 'cc<') {
-	// 	let cctext = null;
-	// 	if (mainMsg[1] != undefined) cctext = mainMsg[1];
-	// 	return coc7(parseInt(inputStr.split('=')[1]), cctext);
-	// }
-
-	// //獎懲骰設定於此
-	// if (inputStr.split('=')[0] == 'cc(1)<' || inputStr.split('=')[0] == 'cc(2)<' || inputStr.split('=')[0] == 'cc(-1)<' || inputStr.split('=')[0] == 'cc(-2)<') {
-	// 	let cctext = null;
-	// 	if (mainMsg[1] != undefined) cctext = mainMsg[1];
-	// 	return coc7bp(parseInt(inputStr.split('=')[1]), parseInt(inputStr.split('(')[1]), cctext);
-	// }
-
-	// //ccb指令開始於此
-	// if (inputStr.split('=')[0] == 'ccb<') {
-	// 	let cctext = null;
-	// 	if (mainMsg[1] != undefined) cctext = mainMsg[1];
-	// 	return coc6(parseInt(inputStr.split('=')[1]), cctext);
-	// }
-
 	// 擲骰指令
 	else
 	if (inputStr.toLowerCase().match(/^cc/) != null)
@@ -134,16 +113,9 @@ function parseInput(rplyToken, inputStr) {
 	else
 	if (inputStr.match(/\w/) != null && inputStr.toLowerCase().match(/d/) != null)
 		return nomalDiceRoller(inputStr);
-	// else
-	// // 快速產生角卡 
-	// if (inputStr.match('角卡') != null) {
-	// 	let nctext = null;
-	// 	if (mainMsg[1] != undefined) 
-	// 		nctext = mainMsg[1];
-	// 	return CreateCocCard(inputStr, mainMsg[1]);
-	// }
 
-	//nc指令開始於此 - Fine tune and patch from "zeteticl", thanks a lot
+	//nc指令開始於此 
+	// - Fine tune and patch from "zeteticl", thanks a lot
 	// if (trigger.match('NC') != null || trigger.match('nc') != null || trigger.match('NA') != null || trigger.match('na') != null) {
 	else
 	if (trigger.match(/^([1-4]+)(NC|nc)/) != null || trigger.match(/^([1-4]+)(NA|na)/) != null) {
@@ -165,34 +137,6 @@ function parseInput(rplyToken, inputStr) {
 		}
 		return NormalDrawCup(trigger, cuptext);
 	}
-
-	// //roll 指令開始於此
-	// if (trigger == 'roll') {
-
-	// 	if (inputStr.split(msgSplitor).length == 1) return displayUsage(2);
-
-	// 	if (mainMsg[1] == '六版角卡') {
-	// 		return CreateCoC6Card(mainMsg[1], mainMsg[2]);
-	// 	}
-
-	// 	if (mainMsg[1] == '七版角卡') {
-	// 		return CreateCoC7Card(mainMsg[1], mainMsg[2]);
-	// 	}
-
-	// 	if (inputStr.split(msgSplitor).length >= 3) {
-
-	// 		if (mainMsg[2].split('*').length == 2) {
-	// 			let tempArr = mainMsg[2].split('*');
-	// 			let text = inputStr.split(msgSplitor)[3];
-	// 			//secCommand = parseInt(tempArr[1]);
-	// 			return MutiRollDice(mainMsg[1], parseInt(tempArr[1]), text);
-	// 		}
-	// 		return NomalRollDice(mainMsg[1], mainMsg[2]);
-	// 	}
-	// 	if (inputStr.split(msgSplitor).length == 2) {
-	// 		return NomalRollDice(mainMsg[1], mainMsg[2]);
-	// 	}
-	// }
 
 	//tarot 指令
 	else
@@ -255,22 +199,18 @@ function nechronica(triggermsg, text) {
 	//首先判斷是否是誤啟動（檢查是否有符合骰子格式）
 	if (triggermsg.match(/^(\d+)(NC|NA)((\+|-)(\d+)|)$/i) == null) return undefined;
 
-	var match = /^(\d+)(NC|NA)((\+|-)(\d+)|)$/i.exec(triggermsg); //判斷式
+	/* 判斷式 */
+	var match = /^(\d+)(NC|NA)((\+|-)(\d+)|)$/i.exec(triggermsg);
 
-	//Bug: 要是輸入 DNA, 這邊會變成 NaN  //已 Fix
-	// if (Number(match[1]) < 1 || Number(match[1]) > 4)	//限制在 1-4 顆骰子之間
-	// {
-	// 	returnStr = '格式不對，請重新輸入';
-	// 	return returnStr;
-	// }
-
-	for (var i = 0; i < Number(match[1]); i++) //其實我不太會用 for each
+	/* 其實我不太會用 for each */
+	for (var i = 0; i < Number(match[1]); i++) 
 	{
 		dicenew = Dice(10) + Number(match[3]);
 		ncarray.push(dicenew);
 	}
 
-	dicemax = Math.max(...ncarray); //判斷最大最小值
+	/* 判斷最大最小值 */
+	dicemax = Math.max(...ncarray);
 	dicemin = Math.min(...ncarray);
 
 	/* 產生格式 */
@@ -453,371 +393,6 @@ function CoC7th(inputStr) {
 	return ReStr;
 }
 
-// function CreateCocCard(inputStr, text) {
-// 	if (inputStr.match('六版') != null) 
-// 		return CreateCoC6Card(text);
-// 	else
-// 	if (inputStr.match('七版') != null) 
-// 		return CreateCoC7Card(text);
-// 	else
-// 		return undefined;
-// }
-
-
-// function CreateCoC7Card(text) {
-// 	let returnStr = '';
-// 	let dicecount = 0;
-
-// 	if (text == null) {
-// 		dicecount = (Dice(6) + Dice(6) + Dice(6)) * 5;
-// 		returnStr = 'STR: ' + dicecount; //str
-// 		dicecount = (Dice(6) + Dice(6) + Dice(6)) * 5;
-// 		returnStr += '\nCON: ' + dicecount; //con
-// 		dicecount = (Dice(6) + Dice(6) + Dice(6)) * 5;
-// 		returnStr += '\nPOW: ' + dicecount; //pow
-// 		dicecount = (Dice(6) + Dice(6) + Dice(6)) * 5;
-// 		returnStr += '\nDEX: ' + dicecount; //pow
-// 		dicecount = (Dice(6) + Dice(6) + Dice(6)) * 5;
-// 		returnStr += '\nAPP: ' + dicecount; //app
-
-// 		dicecount = (Dice(6) + Dice(6) + 6) * 5;
-// 		returnStr += '\nSIZ: ' + dicecount; //siz
-// 		dicecount = (Dice(6) + Dice(6) + 6) * 5;
-// 		returnStr += '\nINT: ' + dicecount; //int
-// 		dicecount = (Dice(6) + Dice(6) + 6) * 5;
-// 		returnStr += '\nEDU: ' + dicecount; //edu
-
-// 		dicecount = (Dice(6) + Dice(6) + Dice(6));
-// 		returnStr += '\nLUK: ' + dicecount; //luk
-// 	} else {
-// 		returnStr = text + ':'
-// 		dicecount = (Dice(6) + Dice(6) + Dice(6)) * 5;
-// 		returnStr += '\nSTR: ' + dicecount; //str
-// 		dicecount = (Dice(6) + Dice(6) + Dice(6)) * 5;
-// 		returnStr += '\nCON: ' + dicecount; //con
-// 		dicecount = (Dice(6) + Dice(6) + Dice(6)) * 5;
-// 		returnStr += '\nPOW: ' + dicecount; //pow
-// 		dicecount = (Dice(6) + Dice(6) + Dice(6)) * 5;
-// 		returnStr += '\nDEX: ' + dicecount; //pow
-// 		dicecount = (Dice(6) + Dice(6) + Dice(6)) * 5;
-// 		returnStr += '\nAPP: ' + dicecount; //app
-
-// 		dicecount = (Dice(6) + Dice(6) + 6) * 5;
-// 		returnStr += '\nSIZ: ' + dicecount; //siz
-// 		dicecount = (Dice(6) + Dice(6) + 6) * 5;
-// 		returnStr += '\nINT: ' + dicecount; //int
-// 		dicecount = (Dice(6) + Dice(6) + 6) * 5;
-// 		returnStr += '\nEDU: ' + dicecount; //edu
-
-// 		dicecount = (Dice(6) + Dice(6) + Dice(6)) * 5;
-// 		returnStr += '\nLUK: ' + dicecount; //luk
-// 	}
-
-// 	return returnStr;
-// }
-
-
-// function CreateCoC6Card(text) {
-// 	let returnStr = '';
-
-// 	if (text == null) {
-// 		returnStr = 'STR: ' + NomalRollDice('3d6', null); //str
-// 		returnStr += '\nCON: ' + NomalRollDice('3d6', null); //con
-// 		returnStr += '\nPOW: ' + NomalRollDice('3d6', null); //pow
-// 		returnStr += '\nDEX: ' + NomalRollDice('3d6', null); //dex
-// 		returnStr += '\nAPP: ' + NomalRollDice('3d6', null); //app
-// 		returnStr += '\nSIZ: ' + NomalRollDice('2d6+6', null); //siz
-// 		returnStr += '\nINT: ' + NomalRollDice('2d6+6', null); //int
-// 		returnStr += '\nEDU: ' + NomalRollDice('2d6+3', null); //edu
-
-// 	} else {
-// 		returnStr = text + ':'
-// 		returnStr += '\nSTR: ' + NomalRollDice('3d6', null); //str
-// 		returnStr += '\nCON: ' + NomalRollDice('3d6', null); //con
-// 		returnStr += '\nPOW: ' + NomalRollDice('3d6', null); //pow
-// 		returnStr += '\nDEX: ' + NomalRollDice('3d6', null); //dex
-// 		returnStr += '\nAPP: ' + NomalRollDice('3d6', null); //app
-// 		returnStr += '\nSIZ: ' + NomalRollDice('2d6+6', null); //siz
-// 		returnStr += '\nINT: ' + NomalRollDice('2d6+6', null); //int
-// 		returnStr += '\nEDU: ' + NomalRollDice('2d6+3', null); //edu		
-// 	}
-
-// 	return returnStr;
-// }
-
-
-// function coc6(chack, text) {
-// 	let temp = Dice(100);
-
-// 	if (text == null) {
-// 		if (temp == 100) return temp + ' → 啊！大失敗！';
-// 		if (temp <= chack) return temp + ' → 成功';
-// 		else return temp + ' → 失敗';
-// 	} else {
-// 		if (temp == 100) return temp + ' → 啊！大失敗！；' + text;
-// 		if (temp <= chack) return temp + ' → 成功；' + text;
-// 		else return temp + ' → 失敗；' + text;
-// 	}
-// }
-
-// function coc7(chack, text) {
-// 	let temp = Dice(100);
-// 	if (text == null) {
-// 		if (temp == 1) return temp + ' → 恭喜！大成功！';
-// 		if (temp == 100) return temp + ' → 啊！大失敗！';
-// 		if (temp <= chack / 5) return temp + ' → 極限成功';
-// 		if (temp <= chack / 2) return temp + ' → 困難成功';
-// 		if (temp <= chack) return temp + ' → 通常成功';
-// 		else return temp + ' → 失敗';
-// 	} else {
-// 		if (temp == 1) return temp + ' → 恭喜！大成功！；' + text;
-// 		if (temp == 100) return temp + ' → 啊！大失敗！；' + text;
-// 		if (temp <= chack / 5) return temp + ' → 極限成功；' + text;
-// 		if (temp <= chack / 2) return temp + ' → 困難成功；' + text;
-// 		if (temp <= chack) return temp + ' → 通常成功；' + text;
-// 		else return temp + ' → 失敗；' + text;
-// 	}
-// }
-
-// function coc7chack(temp, chack, text) {
-// 	if (text == null) {
-// 		if (temp == 1) return temp + ' → 恭喜！大成功！';
-// 		if (temp == 100) return temp + ' → 啊！大失敗！';
-// 		if (temp <= chack / 5) return temp + ' → 極限成功';
-// 		if (temp <= chack / 2) return temp + ' → 困難成功';
-// 		if (temp <= chack) return temp + ' → 通常成功';
-// 		else return temp + ' → 失敗';
-// 	} else {
-// 		if (temp == 1) return temp + ' → 恭喜！大成功！；' + text;
-// 		if (temp == 100) return temp + ' → 啊！大失敗！；' + text;
-// 		if (temp <= chack / 5) return temp + ' → 極限成功；' + text;
-// 		if (temp <= chack / 2) return temp + ' → 困難成功；' + text;
-// 		if (temp <= chack) return temp + ' → 通常成功；' + text;
-// 		else return temp + ' → 失敗；' + text;
-// 	}
-// }
-
-
-// function coc7bp(chack, bpdiceNum, text) {
-// 	let temp0 = Dice(10) - 1;
-// 	let countStr = '';
-
-// 	if (bpdiceNum > 0) {
-// 		for (let i = 0; i <= bpdiceNum; i++) {
-// 			let temp = Dice(10);
-// 			let temp2 = temp.toString() + temp0.toString();
-// 			if (temp2 > 100) temp2 = parseInt(temp2) - 100;
-// 			countStr = countStr + temp2 + '、';
-// 		}
-// 		countStr = countStr.substring(0, countStr.length - 1)
-// 		let countArr = countStr.split('、');
-
-// 		countStr = countStr + ' → ' + coc7chack(Math.min(...countArr), chack, text);
-// 		return countStr;
-// 	}
-
-// 	if (bpdiceNum < 0) {
-// 		bpdiceNum = Math.abs(bpdiceNum);
-// 		for (let i = 0; i <= bpdiceNum; i++) {
-// 			let temp = Dice(10);
-// 			let temp2 = temp.toString() + temp0.toString();
-// 			if (temp2 > 100) temp2 = parseInt(temp2) - 100;
-// 			countStr = countStr + temp2 + '、';
-// 		}
-// 		countStr = countStr.substring(0, countStr.length - 1)
-// 		let countArr = countStr.split('、');
-
-// 		countStr = countStr + ' → ' + coc7chack(Math.max(...countArr), chack, text);
-// 		return countStr;
-// 	}
-
-// }
-
-// function CreateCoC7Card(DiceToCal, text) {
-// 	let returnStr = '';
-// 	let dicecount = 0;
-
-// 	if (text == null) {
-// 		dicecount = (Dice(6) + Dice(6) + Dice(6)) * 5;
-// 		returnStr = 'STR: ' + dicecount; //str
-// 		dicecount = (Dice(6) + Dice(6) + Dice(6)) * 5;
-// 		returnStr += '\nCON: ' + dicecount; //con
-// 		dicecount = (Dice(6) + Dice(6) + Dice(6)) * 5;
-// 		returnStr += '\nPOW: ' + dicecount; //pow
-// 		dicecount = (Dice(6) + Dice(6) + Dice(6)) * 5;
-// 		returnStr += '\nDEX: ' + dicecount; //pow
-// 		dicecount = (Dice(6) + Dice(6) + Dice(6)) * 5;
-// 		returnStr += '\nAPP: ' + dicecount; //app
-
-// 		dicecount = (Dice(6) + Dice(6) + 6) * 5;
-// 		returnStr += '\nSIZ: ' + dicecount; //siz
-// 		dicecount = (Dice(6) + Dice(6) + 6) * 5;
-// 		returnStr += '\nINT: ' + dicecount; //int
-// 		dicecount = (Dice(6) + Dice(6) + 6) * 5;
-// 		returnStr += '\nEDU: ' + dicecount; //edu
-
-// 		dicecount = (Dice(6) + Dice(6) + Dice(6));
-// 		returnStr += '\nLUK: ' + dicecount; //luk
-// 	} else {
-// 		returnStr = text + ':'
-// 		dicecount = (Dice(6) + Dice(6) + Dice(6)) * 5;
-// 		returnStr += '\nSTR: ' + dicecount; //str
-// 		dicecount = (Dice(6) + Dice(6) + Dice(6)) * 5;
-// 		returnStr += '\nCON: ' + dicecount; //con
-// 		dicecount = (Dice(6) + Dice(6) + Dice(6)) * 5;
-// 		returnStr += '\nPOW: ' + dicecount; //pow
-// 		dicecount = (Dice(6) + Dice(6) + Dice(6)) * 5;
-// 		returnStr += '\nDEX: ' + dicecount; //pow
-// 		dicecount = (Dice(6) + Dice(6) + Dice(6)) * 5;
-// 		returnStr += '\nAPP: ' + dicecount; //app
-
-// 		dicecount = (Dice(6) + Dice(6) + 6) * 5;
-// 		returnStr += '\nSIZ: ' + dicecount; //siz
-// 		dicecount = (Dice(6) + Dice(6) + 6) * 5;
-// 		returnStr += '\nINT: ' + dicecount; //int
-// 		dicecount = (Dice(6) + Dice(6) + 6) * 5;
-// 		returnStr += '\nEDU: ' + dicecount; //edu
-
-// 		dicecount = (Dice(6) + Dice(6) + Dice(6)) * 5;
-// 		returnStr += '\nLUK: ' + dicecount; //luk
-// 	}
-
-// 	return returnStr;
-// }
-
-
-// function CreateCoC6Card(DiceToCal, text) {
-// 	let returnStr = '';
-
-// 	if (text == null) {
-// 		returnStr = 'STR: ' + NomalRollDice('3d6', null); //str
-// 		returnStr += '\nCON: ' + NomalRollDice('3d6', null); //con
-// 		returnStr += '\nPOW: ' + NomalRollDice('3d6', null); //pow
-// 		returnStr += '\nDEX: ' + NomalRollDice('3d6', null); //dex
-// 		returnStr += '\nAPP: ' + NomalRollDice('3d6', null); //app
-// 		returnStr += '\nSIZ: ' + NomalRollDice('2d6+6', null); //siz
-// 		returnStr += '\nINT: ' + NomalRollDice('2d6+6', null); //int
-// 		returnStr += '\nEDU: ' + NomalRollDice('2d6+3', null); //edu
-
-// 	} else {
-// 		returnStr = text + ':'
-// 		returnStr += '\nSTR: ' + NomalRollDice('3d6', null); //str
-// 		returnStr += '\nCON: ' + NomalRollDice('3d6', null); //con
-// 		returnStr += '\nPOW: ' + NomalRollDice('3d6', null); //pow
-// 		returnStr += '\nDEX: ' + NomalRollDice('3d6', null); //dex
-// 		returnStr += '\nAPP: ' + NomalRollDice('3d6', null); //app
-// 		returnStr += '\nSIZ: ' + NomalRollDice('2d6+6', null); //siz
-// 		returnStr += '\nINT: ' + NomalRollDice('2d6+6', null); //int
-// 		returnStr += '\nEDU: ' + NomalRollDice('2d6+3', null); //edu		
-// 	}
-
-// 	return returnStr;
-// }
-
-// function MutiRollDice(DiceToCal, timesNum, text) {
-// 	let cuntSplitor = '+';
-// 	let comSplitor = 'd';
-// 	let CuntArr = DiceToCal.split(cuntSplitor);
-// 	let numMax = CuntArr.length - 1; //設定要做的加法的大次數
-
-// 	var count = 0;
-// 	let countStr = '';
-// 	if (DiceToCal.match('D') != null) return randomYabasoReply() + '\n格式錯啦，d要小寫！';
-
-// 	if (text == null) {
-// 		for (let j = 1; j <= timesNum; j++) {
-// 			count = 0;
-// 			for (let i = 0; i <= numMax; i++) {
-
-// 				let commandArr = CuntArr[i].split(comSplitor);
-// 				let countOfNum = commandArr[0];
-// 				let randomRange = commandArr[1];
-// 				if (randomRange == null) {
-// 					let temp = parseInt(countOfNum);
-// 					//countStr = countStr + temp + '+';
-// 					count += temp;
-// 				} else {
-
-// 					for (let idx = 1; idx <= countOfNum; idx++) {
-// 						let temp = Dice(randomRange);
-// 						//countStr = countStr + temp + '+';
-// 						count += temp;
-// 					}
-// 				}
-// 			}
-// 			countStr = countStr + count + '；';
-// 		}
-// 		countStr = countStr.substring(0, countStr.length - 1);
-// 		return countStr;
-// 	}
-
-// 	if (text != null) {
-// 		for (let j = 1; j <= timesNum; j++) {
-// 			count = 0;
-// 			for (let i = 0; i <= numMax; i++) {
-
-// 				let commandArr = CuntArr[i].split(comSplitor);
-// 				let countOfNum = commandArr[0];
-// 				let randomRange = commandArr[1];
-// 				if (randomRange == null) {
-// 					let temp = parseInt(countOfNum);
-// 					//countStr = countStr + temp + '+';
-// 					count += temp;
-// 				} else {
-
-// 					for (let idx = 1; idx <= countOfNum; idx++) {
-// 						let temp = Dice(randomRange);
-// 						//countStr = countStr + temp + '+';
-// 						count += temp;
-// 					}
-// 				}
-// 			}
-// 			countStr = countStr + count + '；';
-// 		}
-// 		countStr = countStr.substring(0, countStr.length - 1) + '；' + text;
-// 		return countStr;
-// 	}
-
-// }
-
-// function NomalRollDice(DiceToCal, text) {
-// 	let cuntSplitor = '+';
-// 	let comSplitor = 'd';
-// 	let CuntArr = DiceToCal.split(cuntSplitor);
-// 	let numMax = CuntArr.length - 1; //設定要做的加法的大次數
-
-// 	var count = 0;
-// 	let countStr = '';
-// 	if (DiceToCal.match('D') != null) return randomYabasoReply() + '\n格式錯啦，d要小寫！';
-// 	for (let i = 0; i <= numMax; i++) {
-
-// 		let commandArr = CuntArr[i].split(comSplitor);
-// 		let countOfNum = commandArr[0];
-// 		let randomRange = commandArr[1];
-// 		if (randomRange == null) {
-// 			let temp = parseInt(countOfNum);
-// 			countStr = countStr + temp + '+';
-// 			count += temp;
-// 		} else {
-
-// 			for (let idx = 1; idx <= countOfNum; idx++) {
-// 				let temp = Dice(randomRange);
-// 				countStr = countStr + temp + '+';
-// 				count += temp;
-// 			}
-// 		}
-// 	}
-
-// 	if (countStr.split(cuntSplitor).length == 2) {
-// 		if (text == null) countStr = count;
-// 		else countStr = count + '；' + text;
-// 	} else {
-// 		if (text == null) countStr = countStr.substring(0, countStr.length - 1) + '=' + count;
-// 		else countStr = countStr.substring(0, countStr.length - 1) + '=' + count + '；' + text;
-// 	}
-// 	return countStr;
-
-// }
 
 ////////////////////////////////////////
 //////////////// Funny
@@ -1167,7 +742,7 @@ function displayUsage(usage) {
 	let returnStr = '';
 
 	if (usage == 1)
-		returnStr = '原本這是塔羅機器人，但額外支援擲骰功能， \
+		returnStr = '這是支援丟骰的塔羅機器人 ── \
 \nCoC 擲骰範例: \
 \n → ccb<=   六版擲骰 \
 \n → cc<=    七版擲骰 \
@@ -1192,7 +767,7 @@ function displayUsage(usage) {
 \n → 猜拳 剪刀/石頭/布 \
 \n \
 \n另外支援隱藏關鍵字: \
-\n → 凜/甲鳥巴/車干哥/tarot 抽牌 等等... \
+\n → 甲鳥巴/車干哥 等等... \
 \n \
 \n我到底在寫尛';
 
