@@ -2,8 +2,10 @@ Release Note
 ==================
 * 0.5.2 - 2016.12.15
 1. Fix bug to prevent tarot and cup trigger error.
-2. Add new yabaso's message.
-3. Fine tune tiny contents.
+2. Add new yabaso and shiuan's message.
+3. Add new CHANGELOG.
+4. Fine tune tiny contents.
+5. Fix README version numbers.
 
 * 0.5.1
 1. Remove old comment codes.
