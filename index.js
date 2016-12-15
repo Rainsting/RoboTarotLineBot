@@ -45,6 +45,7 @@ app.post('/', jsonParser, function(req, res) {
 
 	if (rplyVal) {
 		replyMsgToLine(rplyToken, rplyVal);
+		console.log('回應訊息: ' + rplyVal);
 	} else {
 		console.log('Do not trigger');
 	}
@@ -92,13 +93,17 @@ function parseInput(rplyToken, inputStr) {
 		return isNaN(parseInt(obj));
 	}
 
+	////////////////////////////////////////
+	//////////////// 啟動關鍵字
+	////////////////////////////////////////	
 	// 關鍵字指令開始於此
 	if (inputStr.match('遠坂凜') != null || inputStr.match('凜') != null) {
 		if (inputStr.match('說明') != null)
 			return displayUsage(1);
 		else
 			return randomDuelReply(inputStr);
-	} else
+	} 
+	else
 	if (inputStr.match('鴨霸獸') != null || inputStr.match('甲鳥巴') != null)
 		return randomYabasoReply(inputStr);
 	else
@@ -106,36 +111,21 @@ function parseInput(rplyToken, inputStr) {
 		return randomBirdReply(inputStr);
 	// if (inputStr.match('軒哥') != null && mainMsg[1] == '決鬥') return randomDuelReply(inputStr);
 
-	// 擲骰指令
-	else
-	if (inputStr.toLowerCase().match(/^cc/) != null)
-		return CoC7th(inputStr.toLowerCase());
-	else
-	if (inputStr.match(/\w/) != null && inputStr.toLowerCase().match(/d/) != null)
-		return nomalDiceRoller(inputStr);
 
-	//nc指令開始於此 
-	// - Fine tune and patch from "zeteticl", thanks a lot
-	// if (trigger.match('NC') != null || trigger.match('nc') != null || trigger.match('NA') != null || trigger.match('na') != null) {
-	else
-	if (trigger.match(/^([1-4]+)(NC|nc)/) != null || trigger.match(/^([1-4]+)(NA|na)/) != null) {
-		let nctext = null;
-		if (mainMsg[1] != undefined) {
-			if (mainMsg[1] == '說明') return displayUsage(5);
-			nctext = mainMsg[1];
-		}
-		return nechronica(trigger, nctext);
-	}
-
+	////////////////////////////////////////
+	//////////////// 占卜關鍵字
+	////////////////////////////////////////	
 	//丟杯 cup 指令開始於此
 	else
-	if (inputStr.match('cup') != null) {
+	// if (inputStr.match('cup') != null) {
+	if (inputStr.toLowerCase().match(/^cup/) || inputStr.match('杯杯')) {
+		console.log('Enter: if select');
 		let cuptext = null;
 		if (mainMsg[1] != undefined) {
 			if (mainMsg[1] == '說明') return displayUsage(4);
 			cuptext = mainMsg[1];
 		}
-		return NormalDrawCup(trigger, cuptext);
+		return NormalDrawCup(inputStr, cuptext);
 	}
 
 	//tarot 指令
@@ -170,7 +160,11 @@ function parseInput(rplyToken, inputStr) {
 			return MultiDrawTarot(mainMsg[1], mainMsg[2], 3); //預設抽 79 張
 		}
 
-	} else
+	} 
+	////////////////////////////////////////
+	//////////////// 其他關鍵字
+	////////////////////////////////////////	
+	else
 	if (trigger == '猜拳') {
 		if (inputStr.split(msgSplitor).length == 1) return displayUsage(6);
 
@@ -180,7 +174,32 @@ function parseInput(rplyToken, inputStr) {
 
 			return RockPaperScissors(mainMsg[1], mainMsg[2]);
 		}
-	} else
+	} 
+	////////////////////////////////////////
+	//////////////// 擲骰關鍵字
+	////////////////////////////////////////
+	// 擲骰指令
+	else
+	if (inputStr.toLowerCase().match(/^cc/) != null)
+		return CoC7th(inputStr.toLowerCase());
+	else
+	/* 這裡的正規表達式，會把非英文判斷檔掉，所以要放這邊，前面的關鍵字才不會出問題 */
+	if (inputStr.match(/\w/) != null && inputStr.toLowerCase().match(/d/) != null)
+		return nomalDiceRoller(inputStr);
+
+	//nc指令開始於此 
+	// - Fine tune and patch from "zeteticl", thanks a lot
+	// if (trigger.match('NC') != null || trigger.match('nc') != null || trigger.match('NA') != null || trigger.match('na') != null) {
+	else
+	if (trigger.match(/^([1-4]+)(NC|nc)/) != null || trigger.match(/^([1-4]+)(NA|na)/) != null) {
+		let nctext = null;
+		if (mainMsg[1] != undefined) {
+			if (mainMsg[1] == '說明') return displayUsage(5);
+			nctext = mainMsg[1];
+		}
+		return nechronica(trigger, nctext);
+	}
+	else
 		return undefined;
 	// if (trigger != 'roll') return null;
 
@@ -446,7 +465,7 @@ function RockPaperScissors(HandToCal, text) {
 //////////////// Cup
 ////////////////////////////////////////
 /* 擲杯功能 */
-function NormalDrawCup(chack, text) {
+function NormalDrawCup(inputStr, text) {
 	let returnStr = ''; //1為陽, 0為陰, 2定為中性
 
 	var result_left = [];
@@ -846,6 +865,10 @@ function randomBirdReply(inputStr) { //軒哥
 		'你是不是愛上我了',
 		'你是不是想(ry',
 		'(｀・ω・´)凸',
+		'只是想廢廢的',
+		'趁我不注意在偷聊什麼',
+		'人生好累',
+		'你看，出來了',
 	];
 	return rplyArr[Math.floor((Math.random() * (rplyArr.length)) + 0)];
 }
@@ -873,7 +896,7 @@ function randomYabasoReply(inputStr) {
 		'噁噁噁噁',
 		'我要讓你們血。染。沙。灘',
 		'oao',
-		'（登愣',
+		'登愣',
 		'耶欸～<3',
 		'想廢廢的',
 	];

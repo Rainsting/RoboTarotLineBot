@@ -1,0 +1,41 @@
+Release Note
+==================
+* 0.5.2 - 2016.12.15
+1. Fix bug to prevent tarot and cup trigger error.
+2. Add new yabaso's message.
+3. Fine tune tiny contents.
+
+* 0.5.1
+1. Remove old comment codes.
+2. Remove old README contents.
+3. Fine tune usage.
+
+* 0.5.0
+1. Add rockpaperscissors function.
+2. Patch coc dices from retsnimle.
+3. Remove character card creating.
+4. Release this version before remove old functions.
+5. Fine tune README.md.
+
+* 0.4.0
+1. Add NC dice function.
+2. Fine tune usage.
+3. Add yabaso languages.
+4. Add NC usage for README.md.
+
+* 0.3.0
+1. Add "baobei" function.
+2. Add README and usage file.
+3. Fine tune garbage language for funny,
+4. Fine tune code contents.
+
+* 0.2.0
+1. Change space to tab.
+2. Change tarot card name to Chinese only.
+3. Fine tune celtic-cross, daily, time methods.
+4. Fine tune a lot of things.
+
+* 0.1.0 - First Release
+1. Fine tune code contents.
+2. Add tarot draw cards.
+3. Add strange functions.

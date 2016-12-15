@@ -1,6 +1,6 @@
 {
   "name": "TarotLineBot",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Steven Tarot Line Bot",
   "engines": {
     "node": "6.9.1"
