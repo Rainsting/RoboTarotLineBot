@@ -869,6 +869,7 @@ function randomBirdReply(inputStr) { //軒哥
 		'趁我不注意在偷聊什麼',
 		'人生好累',
 		'你看，出來了',
+		'(咳血',
 	];
 	return rplyArr[Math.floor((Math.random() * (rplyArr.length)) + 0)];
 }
