@@ -1,5 +1,14 @@
 Release Note
 ==================
+* 0.6.0 - 2016.12.16
+1. Add new function: quick create character.
+2. Add new function: NC mirenn select table.
+3. Fine tune tarot trigger function.
+4. Fine tune CoC dive function and its abality.
+5. Fine tune usage and shyuan's table.
+6. Fix bugs. 
+
+
 * 0.5.2 - 2016.12.15
 1. Fix bug to prevent tarot and cup trigger error.
 2. Add new yabaso and shiuan's message.
@@ -12,6 +21,7 @@ Release Note
 2. Remove old README contents.
 3. Fine tune usage.
 
+
 * 0.5.0
 1. Add rockpaperscissors function.
 2. Patch coc dices from retsnimle.
@@ -19,11 +29,13 @@ Release Note
 4. Release this version before remove old functions.
 5. Fine tune README.md.
 
+
 * 0.4.0
 1. Add NC dice function.
 2. Fine tune usage.
 3. Add yabaso languages.
 4. Add NC usage for README.md.
+
 
 * 0.3.0
 1. Add "baobei" function.
@@ -31,11 +43,13 @@ Release Note
 3. Fine tune garbage language for funny,
 4. Fine tune code contents.
 
+
 * 0.2.0
 1. Change space to tab.
 2. Change tarot card name to Chinese only.
 3. Fine tune celtic-cross, daily, time methods.
 4. Fine tune a lot of things.
+
 
 * 0.1.0 - First Release
 1. Fine tune code contents.

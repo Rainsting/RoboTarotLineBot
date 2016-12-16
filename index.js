@@ -115,11 +115,10 @@ function parseInput(rplyToken, inputStr) {
 	////////////////////////////////////////
 	//////////////// 占卜關鍵字
 	////////////////////////////////////////	
-	//丟杯 cup 指令開始於此
+	// 丟杯 cup 指令開始於此
 	else
 	// if (inputStr.match('cup') != null) {
 	if (inputStr.toLowerCase().match(/^cup/) || inputStr.match('杯杯')) {
-		console.log('Enter: if select');
 		let cuptext = null;
 		if (mainMsg[1] != undefined) {
 			if (mainMsg[1] == '說明') return displayUsage(4);
@@ -128,9 +127,10 @@ function parseInput(rplyToken, inputStr) {
 		return NormalDrawCup(inputStr, cuptext);
 	}
 
-	//tarot 指令
+	// tarot 指令
 	else
-	if (trigger == 'tarot' || trigger == 'Tarot') {
+	// if (trigger == 'tarot' || trigger == 'Tarot') {
+	if (trigger.toLowerCase().match(/^tarot/)) {
 
 		if (inputStr.split(msgSplitor).length == 1) return displayUsage(3);
 
@@ -178,18 +178,16 @@ function parseInput(rplyToken, inputStr) {
 	////////////////////////////////////////
 	//////////////// 擲骰關鍵字
 	////////////////////////////////////////
-	// 擲骰指令
+	// 擲骰指令 // Thanks for zeteticl & yuuko a lot!
 	else
 	if (inputStr.toLowerCase().match(/^cc/) != null)
 		return CoC7th(inputStr.toLowerCase());
 	else
-	/* 這裡的正規表達式，會把非英文判斷檔掉，所以要放這邊，前面的關鍵字才不會出問題 */
+	// 這裡的正規表達式，會把非英文判斷檔掉，所以要放這邊，前面的關鍵字才不會出問題 
 	if (inputStr.match(/\w/) != null && inputStr.toLowerCase().match(/d/) != null)
 		return nomalDiceRoller(inputStr);
 
-	//nc指令開始於此 
-	// - Fine tune and patch from "zeteticl", thanks a lot
-	// if (trigger.match('NC') != null || trigger.match('nc') != null || trigger.match('NA') != null || trigger.match('na') != null) {
+	// nc指令開始於此 // - Fine tune and patch from "zeteticl", thanks a lot
 	else
 	if (trigger.match(/^([1-4]+)(NC|nc)/) != null || trigger.match(/^([1-4]+)(NA|na)/) != null) {
 		let nctext = null;
@@ -197,7 +195,18 @@ function parseInput(rplyToken, inputStr) {
 			if (mainMsg[1] == '說明') return displayUsage(5);
 			nctext = mainMsg[1];
 		}
-		return nechronica(trigger, nctext);
+		return nechronica_dice(trigger, nctext);
+	}
+	
+	// 判定 NC 依戀，指令使用此網頁的說明：http://ao-works.net/blog/dice-regret-table-both
+	else
+	if (inputStr.toLowerCase().match(/(nm)/) != null)	{
+		let nctext = null;
+		if (mainMsg[1] != undefined) {
+			if (mainMsg[1] == '說明') return displayUsage(5);
+			nctext = mainMsg[1];
+		}
+		return nechronica_mirenn(trigger, nctext);
 	}
 	else
 		return undefined;
@@ -208,14 +217,14 @@ function parseInput(rplyToken, inputStr) {
 ////////////////////////////////////////
 //////////////// nechronica (NC)
 ////////////////////////////////////////
-function nechronica(triggermsg, text) {
+function nechronica_dice(triggermsg, text) {
 	let returnStr = '';
 	var ncarray = [];
 	var dicemax = 0,
 		dicemin = 0,
 		dicenew = 0;
 
-	//首先判斷是否是誤啟動（檢查是否有符合骰子格式）
+	/* 首先判斷是否是誤啟動（檢查是否有符合骰子格式）*/
 	if (triggermsg.match(/^(\d+)(NC|NA)((\+|-)(\d+)|)$/i) == null) return undefined;
 
 	/* 判斷式 */
@@ -265,6 +274,38 @@ function nechronica(triggermsg, text) {
 	return returnStr;
 }
 
+function nechronica_mirenn(triggermsg, text) {
+	let returnStr = '';
+
+	//首先判斷是否是誤啟動（檢查是否有符合骰子格式）
+	if (triggermsg.match(/^(NM)$/i) == null) return undefined;
+
+	//加上文字
+	if (text != null)
+		returnStr = text + ': \n' + nechronica_mirenn_table(1);
+	else
+		returnStr = nechronica_mirenn_table(1);
+
+	return returnStr;
+}
+
+/* 這邊預留 mode 以便未來可以加入其他依戀 */
+function nechronica_mirenn_table(mode) {
+	let rplyArr = [
+		'【01嫌惡】[發狂：敵對認識] 戰鬥中，沒有命中敵方的攻擊，全部都會擊中嫌惡的對象。(如果有在射程內的話)',
+		'【02獨占】[發狂：獨占衝動] 戰鬥開始與戰鬥結束，各別選擇損傷1個對象的部件。',
+		'【03依存】[發狂：幼兒退行] 妳的最大行動值減少2。',
+		'【04執著】[發狂：跟蹤監視] 戰鬥開始與戰鬥結束時，對象對妳的依戀精神壓力點數各增加1點。(如果已經處在精神崩壞狀態，可以不用作此處理)',
+		'【05戀心】[發狂：自傷行為] 戰鬥開始與戰鬥結束時，各別選擇損傷1個自己的部件。',
+		'【06對抗】[發狂：過度競爭] 戰鬥開始與戰鬥結束時，各別選擇任意依戀，增加1點精神壓力點數。(如果已經處在精神崩壞狀態，可以不用作此處理)',
+		'【07友情】[發狂：共鳴依存] 單元結束時，對象的損傷部件比妳還要多的時候，妳的部件損傷數，要增加到與對方相同。',
+		'【08保護】[發狂：過度保護] 戰鬥當中，妳跟「依戀的對象」處於不同區域的時候，無法宣告「移動以外的戰鬥宣言」，此外妳沒有辦法把「自身」與「依戀對象」以外的單位當成移動對象。',
+		'【09憧憬】[發狂：贗作妄想] 戰鬥當中，妳跟「依戀的對象」處於同樣區域的時候，無法宣告「移動以外的戰鬥宣言」，此外妳沒有辦法把「自身」與「依戀對象」以外的單位當成移動對象。',
+		'【10信賴】[發狂：疑心暗鬼] 除了妳以外的所有姊妹，最大行動值減少1。',
+	];
+	return rplyArr[Math.floor((Math.random() * (rplyArr.length)) + 0)];
+}
+
 ////////////////////////////////////////
 //////////////// COC
 ////////////////////////////////////////
@@ -279,55 +320,60 @@ function nomalDiceRoller(inputStr) {
 	//排除小數點
 	if (mutiOrNot.toString().match(/\./) != null) return undefined;
 
-	//先定義要輸出的Str
-	let finalStr = '';
-
-	//是複數擲骰喔
 	if (mutiOrNot.toString().match(/\D/) == null) {
-		finalStr = '複數擲骰：\n'
+		let finalStr = '複數擲骰：'
 		if (mutiOrNot > 20) return '不支援20次以上的複數擲骰。';
 
 		for (i = 1; i <= mutiOrNot; i++) {
 			let DiceToRoll = inputStr.toLowerCase().split(' ', 2)[1];
 			if (DiceToRoll.match('d') == null) return undefined;
-
-			//寫出算式
-			let equation = DiceToRoll;
-			while (equation.match(/\d+d\d+/) != null) {
-				let tempMatch = equation.match(/\d+d\d+/);
-				equation = equation.replace(/\d+d\d+/, RollDice(tempMatch));
-			}
-
-			//計算算式
-			let answer = eval(equation.toString());
-			finalStr = finalStr + i + '# ' + equation + ' = ' + answer + '\n';
+			finalStr = finalStr + '\n' + i + '# ' + DiceCal(DiceToRoll);
 		}
-
-	} else {
-		//一般單次擲骰
-		let DiceToRoll = mutiOrNot.toString();
-
-		if (DiceToRoll.match('d') == null) return undefined;
-
-		//寫出算式
-		let equation = DiceToRoll;
-		while (equation.match(/\d+d\d+/) != null) {
-			let tempMatch = equation.match(/\d+d\d+/);
-			if (tempMatch.toString().split('d')[0] > 200) return '不支援200D以上擲骰。';
-			if (tempMatch.toString().split('d')[1] == 1 || tempMatch.toString().split('d')[1] > 500) return '不支援D1和超過D500的擲骰。';
-			equation = equation.replace(/\d+d\d+/, RollDice(tempMatch));
-		}
-
-		//計算算式
-		let answer = eval(equation.toString());
-		finalStr = '基本擲骰：' + equation + ' = ' + answer;
-	}
-	return finalStr;
+		if (finalStr.match('200D') != null) return '不支援200D以上擲骰';
+		if (finalStr.match('D500') != null) return '不支援D1和超過D500的擲骰';
+		return finalStr;
+	} else return '基本擲骰：' + DiceCal(mutiOrNot.toString());
 }
 
+
+//作計算的函數
+function DiceCal(inputStr) {
+
+	//首先判斷是否是誤啟動（檢查是否有符合骰子格式）
+	if (inputStr.toLowerCase().match(/\d+d\d+/) == null) return undefined;
+
+	//排除小數點
+	if (inputStr.toString().match(/\./) != null) return undefined;
+
+	//先定義要輸出的Str
+	let finalStr = '';
+
+	//一般單次擲骰
+	let DiceToRoll = inputStr.toString().toLowerCase();
+	if (DiceToRoll.match('d') == null) return undefined;
+
+	//寫出算式
+	let equation = DiceToRoll;
+	while (equation.match(/\d+d\d+/) != null) {
+		let tempMatch = equation.match(/\d+d\d+/);
+		if (tempMatch.toString().split('d')[0] > 200) return '不支援200D以上擲骰';
+		if (tempMatch.toString().split('d')[1] == 1 || tempMatch.toString().split('d')[1] > 500) return '不支援D1和超過D500的擲骰';
+		equation = equation.replace(/\d+d\d+/, RollDice(tempMatch));
+	}
+
+	//計算算式
+	let answer = eval(equation.toString());
+	finalStr = equation + ' = ' + answer;
+
+	return finalStr;
+
+}
+
+
+//用來把d給展開成算式的函數
 function RollDice(inputStr) {
 	//先把inputStr變成字串（不知道為什麼非這樣不可）
-	let comStr = inputStr.toString();
+	let comStr = inputStr.toString().toLowerCase();
 	let finalStr = '(';
 
 	for (let i = 1; i <= comStr.split('d')[0]; i++) {
@@ -338,7 +384,136 @@ function RollDice(inputStr) {
 	return finalStr;
 }
 
+
 function CoC7th(inputStr) {
+
+	if (inputStr.toLowerCase().match('說明') != null)
+		return displayUsage(2);
+
+	//先判斷是不是要創角
+	//這是悠子房規創角
+	if (inputStr.toLowerCase().match('悠子創角') != null) {
+		let finalStr = '骰七次3D6取五次，\n決定STR、CON、DEX、APP、POW。\n';
+
+		for (i = 1; i <= 7; i++) {
+			finalStr = finalStr + '\n' + i + '# ' + DiceCal('3d6*5');
+		}
+
+		finalStr = finalStr + '\n==';
+		finalStr = finalStr + '\n骰四次2D6+6取三次，\n決定SIZ、INT、EDU。\n';
+
+		for (i = 1; i <= 4; i++) {
+			finalStr = finalStr + '\n' + i + '# ' + DiceCal('(2d6+6)*5');
+		}
+
+		finalStr = finalStr + '\n==';
+		finalStr = finalStr + '\n骰兩次3D6取一次，\n決定LUK。\n';
+		for (i = 1; i <= 2; i++) {
+			finalStr = finalStr + '\n' + i + '# ' + DiceCal('3d6*5');
+		}
+
+		return finalStr;
+	}
+
+	//這是傳統創角
+	if (inputStr.toLowerCase().match('核心創角') != null) {
+
+		if (inputStr.split(' ').length != 3) return undefined;
+
+		//讀取年齡
+		let old = parseInt(inputStr.split(' ', 3)[2]);
+		if (old == NaN) return undefined;
+		let ReStr = '調查員年齡設為：' + old + '\n';
+		//設定 因年齡減少的點數 和 EDU加骰次數
+		let Debuff = 0;
+		let AppDebuff = 0;
+		let EDUinc = 0;
+
+		let oldArr = [15, 20, 40, 50, 60, 70, 80]
+		let DebuffArr = [5, 0, 5, 10, 20, 40, 80]
+		let AppDebuffArr = [0, 0, 5, 10, 15, 20, 25]
+		let EDUincArr = [0, 1, 2, 3, 4, 4, 4]
+
+		if (old < 15) return ReStr + '等等，核心規則不允許小於15歲的人物哦。';
+		if (old >= 90) return ReStr + '等等，核心規則不允許90歲以上的人物哦。';
+
+		for (i = 0; old >= oldArr[i]; i++) {
+			Debuff = DebuffArr[i];
+			AppDebuff = AppDebuffArr[i];
+			EDUinc = EDUincArr[i];
+		}
+
+		ReStr = ReStr + '==\n';
+		if (old < 20) ReStr = ReStr + '年齡調整：從STR、SIZ中減去' + Debuff + '點\n（請自行手動選擇計算）。\n將EDU減去5點。LUK可擲兩次取高。';
+		else
+		if (old >= 40) ReStr = ReStr + '年齡調整：從STR、CON或DEX中「總共」減去' + Debuff + '點\n（請自行手動選擇計算）。\n將APP減去' + AppDebuff + '點。可做' + EDUinc + '次EDU的成長擲骰。';
+		else ReStr = ReStr + '年齡調整：可做' + EDUinc + '次EDU的成長擲骰。';
+		ReStr = ReStr + '\n==';
+
+		// STR
+		ReStr = ReStr + '\n\nＳＴＲ：' + DiceCal('3d6*5');
+		if (old >= 40) ReStr = ReStr + ' ← 這三項自選共減' + Debuff + '點';
+		if (old < 20) ReStr = ReStr + ' ← 這兩項擇一減' + Debuff + '點';
+
+		// CON
+		ReStr = ReStr + '\nＣＯＮ：' + DiceCal('3d6*5');
+		if (old >= 40) ReStr = ReStr + ' ← 這三項自選共減' + Debuff + '點';
+
+		// DEX
+		ReStr = ReStr + '\nＤＥＸ：' + DiceCal('3d6*5');
+		if (old >= 40) ReStr = ReStr + ' ← 這三項自選共減' + Debuff + '點';
+
+		// APP
+		if (old >= 40) ReStr = ReStr + '\nＡＰＰ：' + DiceCal('3d6*5-' + AppDebuff);
+		else ReStr = ReStr + '\nＡＰＰ：' + DiceCal('3d6*5');
+
+		// POW
+		ReStr = ReStr + '\nＰＯＷ：' + DiceCal('3d6*5');
+
+		// SIZ
+		ReStr = ReStr + '\nＳＩＺ：' + DiceCal('(2d6+6)*5');
+		if (old < 20) ReStr = ReStr + ' ← 這兩項擇一減' + Debuff + '點';
+
+		// INT
+		ReStr = ReStr + '\nＩＮＴ：' + DiceCal('(2d6+6)*5');
+
+		// EDU
+		if (old < 20) ReStr = ReStr + '\nＥＤＵ：' + DiceCal('3d6*5-5');
+		else {
+			let firstEDU = '(' + RollDice('2d6') + '+6)*5';
+			ReStr = ReStr + '\n==';
+			ReStr = ReStr + '\nＥＤＵ初始值：' + firstEDU + ' = ' + eval(firstEDU);
+
+			let tempEDU = eval(firstEDU);
+
+			for (i = 1; i <= EDUinc; i++) {
+				let EDURoll = Dice(100);
+				ReStr = ReStr + '\n第' + i + '次EDU成長 → ' + EDURoll;
+
+
+				if (EDURoll > tempEDU) {
+					let EDUplus = Dice(10);
+					ReStr = ReStr + ' → 成功成長' + EDUplus + '點';
+					tempEDU = tempEDU + EDUplus;
+				} else {
+					ReStr = ReStr + ' → 沒有成長';
+				}
+			}
+			ReStr = ReStr + '\n';
+			ReStr = ReStr + '\nＥＤＵ最終值：' + tempEDU;
+		}
+		ReStr = ReStr + '\n==';
+
+		// LUK
+		ReStr = ReStr + '\n\nLUK：' + DiceCal('3d6*5');
+		if (old < 20) ReStr = ReStr + '\nLUK額外加骰：' + DiceCal('3D6*5');
+
+		return ReStr;
+	}
+
+	//如果不是正確的格式，直接跳出
+	if (inputStr.match('=') == null && inputStr.match('>') == null) return undefined;
+
 	//記錄檢定要求值
 	let chack = parseInt(inputStr.split('=', 2)[1]);
 	//設定回傳訊息
@@ -362,7 +537,7 @@ function CoC7th(inputStr) {
 			ReStr = '(1D100>' + chack + ') → ' + finalRoll + ' → 成功成長' + Dice(10) + '點';
 			return ReStr;
 		}
-		if (finalRoll < chack) {
+		if (finalRoll <= chack) {
 			ReStr = '(1D100>' + chack + ') → ' + finalRoll + ' → 沒有成長';
 			return ReStr;
 		}
@@ -404,7 +579,7 @@ function CoC7th(inputStr) {
 	else ReStr = ReStr + finalRoll + ' → 失敗';
 
 	//浮動大失敗運算
-	if (finalRoll <= 99 && finalRoll >= 95) {
+	if (finalRoll <= 99 && finalRoll >= 95 && chack >= 50) {
 		if (chack / 2 < 50) ReStr = ReStr + '\n（若要求困難成功則為大失敗）';
 		else
 		if (chack / 5 < 50) ReStr = ReStr + '\n（若要求極限成功則為大失敗）';
@@ -761,18 +936,24 @@ function displayUsage(usage) {
 	let returnStr = '';
 
 	if (usage == 1)
-		returnStr = '這是支援丟骰的塔羅機器人 ── \
+		returnStr = '\
+這是支援丟骰的塔羅機器人 ── \
 \nCoC 擲骰範例: \
 \n → ccb<=   六版擲骰 \
 \n → cc<=    七版擲骰 \
-\n → cc(N)<= 獎勵骰 \
+\n → cc(N)<= 獎勵骰 [-2~2] \
 \n → cc>     幕間成長 \
 \n → 2d4+1 / 2D10+1d2  直接擲骰 \
 \n → 7 3d6 / 5 2d6+6   多筆輸出 \
 \n \
+\nCoC 一鍵創角: \
+\n → cc 核心創角 [年齡]  以核心規則創角（含年齡調整）\
+\n → cc 悠子創角  主要屬性骰七取五，次要屬性骰四取三，LUK骰二取一\
+\n \
 \nNC 擲骰範例: \
 \n → 1NA (問題) \
 \n → 4NC+2 (問題) \
+\n → NM (對象)  可判定依戀 \
 \n \
 \n塔羅範例: \
 \n → tarot daily/每日 (問題) \
@@ -786,33 +967,46 @@ function displayUsage(usage) {
 \n → 猜拳 剪刀/石頭/布 \
 \n \
 \n另外支援隱藏關鍵字: \
-\n → 甲鳥巴/車干哥 等等... \
+\n → 凜/甲鳥巴/車干哥 等等 \
 \n \
-\n我到底在寫尛';
+\n功能越來越多了呢...';
 
-	// 	if (usage == 2)
-	// 		returnStr = '總之你要擲骰前就先打roll，後面接像是2d6，1d6+3，2d6+1d3之類的就好。  \
-	// \n要多筆輸出就是先空一格再打像是 *5 之類的。  \
-	// \n請愛用小寫d，不支援大寫D';
+	if (usage == 2)
+		returnStr = '\
+CoC 擲骰範例: \
+\n → ccb<=   六版擲骰 \
+\n → cc<=    七版擲骰 \
+\n → cc(N)<= 獎勵骰 [-2~2] \
+\n → cc>     幕間成長 \
+\n → 2d4+1 / 2D10+1d2  直接擲骰 \
+\n → 7 3d6 / 5 2d6+6   多筆輸出 \
+\n \
+\nCoC 一鍵創角: \
+\n → cc 核心創角 [年齡]  以核心規則創角（含年齡調整）\
+\n → cc 悠子創角  主要屬性骰七取五，次要屬性骰四取三，LUK骰二取一';
 
 	if (usage == 3)
-		returnStr = '每日運勢: 22 張，請用 tarot daily/每日 \
+		returnStr = '\
+每日運勢: 22 張，請用 tarot daily/每日 \
 \n時間之流: 79 張，請用 tarot time/時間 (問題) \
 \n大十字: 79 張，請用 tarot cross/大十字 (問題) \
 \n儘管玩玩看';
 
 	if (usage == 4)
-		returnStr = '常見的擲筊 \
+		returnStr = '\
+常見的擲筊 \
 \n請用 丟杯/擲筊/cup (問題) \
 \n會出現聖杯、笑杯、蓋杯、沒杯與立杯等結果';
 
 	if (usage == 5)
-		returnStr = '支援 NC 擲骰囉 \
+		returnStr = '\
+支援 NC 擲骰囉 \
 \n請用基本 1NA/4NC+2 (問題) 之類的來丟\
 \n大小寫都可以';
 
 	if (usage == 6)
-		returnStr = '猜拳 \
+		returnStr = '\
+猜拳 \
 \n請用 猜拳 剪刀/石頭/布 來出拳\
 \n好孩子不可以亂出喔！';
 
@@ -870,6 +1064,10 @@ function randomBirdReply(inputStr) { //軒哥
 		'人生好累',
 		'你看，出來了',
 		'(咳血',
+		'幹啊不就好棒棒',
+		'Magic！',
+		'哩金變態',
+		'真是任性(?',
 	];
 	return rplyArr[Math.floor((Math.random() * (rplyArr.length)) + 0)];
 }
