@@ -178,15 +178,6 @@ function parseInput(rplyToken, inputStr) {
 	////////////////////////////////////////
 	//////////////// 擲骰關鍵字
 	////////////////////////////////////////
-	// 擲骰指令 // Thanks for zeteticl & yuuko a lot!
-	else
-	if (inputStr.toLowerCase().match(/^cc/) != null)
-		return CoC7th(inputStr.toLowerCase());
-	else
-	// 這裡的正規表達式，會把非英文判斷檔掉，所以要放這邊，前面的關鍵字才不會出問題 
-	if (inputStr.match(/\w/) != null && inputStr.toLowerCase().match(/d/) != null)
-		return nomalDiceRoller(inputStr);
-
 	// nc指令開始於此 // - Fine tune and patch from "zeteticl", thanks a lot
 	else
 	if (trigger.match(/^([1-4]+)(NC|nc)/) != null || trigger.match(/^([1-4]+)(NA|na)/) != null) {
@@ -200,7 +191,7 @@ function parseInput(rplyToken, inputStr) {
 	
 	// 判定 NC 依戀，指令使用此網頁的說明：http://ao-works.net/blog/dice-regret-table-both
 	else
-	if (inputStr.toLowerCase().match(/(nm)/) != null)	{
+	if (inputStr.toLowerCase().match(/(nm|nl)/) != null)	{
 		let nctext = null;
 		if (mainMsg[1] != undefined) {
 			if (mainMsg[1] == '說明') return displayUsage(5);
@@ -208,6 +199,17 @@ function parseInput(rplyToken, inputStr) {
 		}
 		return nechronica_mirenn(trigger, nctext);
 	}
+
+	// 擲骰指令 // Thanks for zeteticl & yuuko a lot!
+	else
+	if (inputStr.toLowerCase().match(/^cc/) != null)
+		return CoC7th(inputStr.toLowerCase());
+	
+	else
+	// 這裡的正規表達式，會把非英文判斷檔掉，所以要放這邊，前面的關鍵字才不會出問題 
+	if (inputStr.match(/\w/) != null && inputStr.toLowerCase().match(/d/) != null)
+		return nomalDiceRoller(inputStr);
+
 	else
 		return undefined;
 	// if (trigger != 'roll') return null;
@@ -276,34 +278,36 @@ function nechronica_dice(triggermsg, text) {
 
 function nechronica_mirenn(triggermsg, text) {
 	let returnStr = '';
+	var dicenew = 0;
 
 	//首先判斷是否是誤啟動（檢查是否有符合骰子格式）
-	if (triggermsg.match(/^(NM)$/i) == null) return undefined;
+	if (triggermsg.match(/^(NM|NL)$/i) == null) return undefined;
 
-	//加上文字
+	dicenew = Dice(10);
+
+	// 產生格式
 	if (text != null)
-		returnStr = text + ': \n' + nechronica_mirenn_table(1);
+		returnStr = text + ': \n' + '依戀 (' + (dicenew+1) + '[' + (dicenew+1) + ']) → ' + nechronica_mirenn_table(dicenew);
 	else
-		returnStr = nechronica_mirenn_table(1);
+		returnStr = '依戀 (' + (dicenew+1) + '[' + (dicenew+1) + ']) → ' + nechronica_mirenn_table(dicenew);
 
 	return returnStr;
 }
 
 /* 這邊預留 mode 以便未來可以加入其他依戀 */
 function nechronica_mirenn_table(mode) {
-	let rplyArr = [
-		'【01嫌惡】[發狂：敵對認識] 戰鬥中，沒有命中敵方的攻擊，全部都會擊中嫌惡的對象。(如果有在射程內的話)',
-		'【02獨占】[發狂：獨占衝動] 戰鬥開始與戰鬥結束，各別選擇損傷1個對象的部件。',
-		'【03依存】[發狂：幼兒退行] 妳的最大行動值減少2。',
-		'【04執著】[發狂：跟蹤監視] 戰鬥開始與戰鬥結束時，對象對妳的依戀精神壓力點數各增加1點。(如果已經處在精神崩壞狀態，可以不用作此處理)',
-		'【05戀心】[發狂：自傷行為] 戰鬥開始與戰鬥結束時，各別選擇損傷1個自己的部件。',
-		'【06對抗】[發狂：過度競爭] 戰鬥開始與戰鬥結束時，各別選擇任意依戀，增加1點精神壓力點數。(如果已經處在精神崩壞狀態，可以不用作此處理)',
-		'【07友情】[發狂：共鳴依存] 單元結束時，對象的損傷部件比妳還要多的時候，妳的部件損傷數，要增加到與對方相同。',
-		'【08保護】[發狂：過度保護] 戰鬥當中，妳跟「依戀的對象」處於不同區域的時候，無法宣告「移動以外的戰鬥宣言」，此外妳沒有辦法把「自身」與「依戀對象」以外的單位當成移動對象。',
-		'【09憧憬】[發狂：贗作妄想] 戰鬥當中，妳跟「依戀的對象」處於同樣區域的時候，無法宣告「移動以外的戰鬥宣言」，此外妳沒有辦法把「自身」與「依戀對象」以外的單位當成移動對象。',
-		'【10信賴】[發狂：疑心暗鬼] 除了妳以外的所有姊妹，最大行動值減少1。',
-	];
-	return rplyArr[Math.floor((Math.random() * (rplyArr.length)) + 0)];
+	if (mode == 0) returnStr = '【嫌惡】\n[發狂：敵對認識] 戰鬥中，沒有命中敵方的攻擊，全部都會擊中嫌惡的對象。(如果有在射程內的話)';
+	if (mode == 1) returnStr = '【獨占】\n[發狂：獨占衝動] 戰鬥開始與戰鬥結束，各別選擇損傷1個對象的部件。';
+	if (mode == 2) returnStr = '【依存】\n[發狂：幼兒退行] 妳的最大行動值減少2。';
+	if (mode == 3) returnStr = '【執著】\n[發狂：跟蹤監視] 戰鬥開始與戰鬥結束時，對象對妳的依戀精神壓力點數各增加1點。(如果已經處在精神崩壞狀態，可以不用作此處理)';
+	if (mode == 4) returnStr = '【戀心】\n[發狂：自傷行為] 戰鬥開始與戰鬥結束時，各別選擇損傷1個自己的部件。';
+	if (mode == 5) returnStr = '【對抗】\n[發狂：過度競爭] 戰鬥開始與戰鬥結束時，各別選擇任意依戀，增加1點精神壓力點數。(如果已經處在精神崩壞狀態，可以不用作此處理)';
+	if (mode == 6) returnStr = '【友情】\n[發狂：共鳴依存] 單元結束時，對象的損傷部件比妳還要多的時候，妳的部件損傷數，要增加到與對方相同。';
+	if (mode == 7) returnStr = '【保護】\n[發狂：過度保護] 戰鬥當中，妳跟「依戀的對象」處於不同區域的時候，無法宣告「移動以外的戰鬥宣言」，此外妳沒有辦法把「自身」與「依戀對象」以外的單位當成移動對象。';
+	if (mode == 8) returnStr = '【憧憬】\n[發狂：贗作妄想] 戰鬥當中，妳跟「依戀的對象」處於同樣區域的時候，無法宣告「移動以外的戰鬥宣言」，此外妳沒有辦法把「自身」與「依戀對象」以外的單位當成移動對象。';
+	if (mode == 9) returnStr = '【信賴】\n[發狂：疑心暗鬼] 除了妳以外的所有姊妹，最大行動值減少1。';
+
+	return returnStr;
 }
 
 ////////////////////////////////////////

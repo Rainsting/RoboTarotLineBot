@@ -1,5 +1,9 @@
 Release Note
 ==================
+* 0.6.1 - 2016.12.20
+1. Fix nc dice cannot trigger Chinese content bug.
+2. Improve NW method and add NL ability.
+
 * 0.6.0 - 2016.12.16
 1. Add new function: quick create character.
 2. Add new function: NC mirenn select table.
