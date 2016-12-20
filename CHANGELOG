@@ -3,6 +3,7 @@ Release Note
 * 0.6.1 - 2016.12.20
 1. Fix nc dice cannot trigger Chinese content bug.
 2. Improve NW method and add NL ability.
+3. Patch nomalDiceRoller from retsnimle.
 
 * 0.6.0 - 2016.12.16
 1. Add new function: quick create character.
