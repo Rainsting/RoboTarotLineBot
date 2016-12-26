@@ -455,24 +455,24 @@ function CoC7th(inputStr) {
 		}
 
 		ReStr = ReStr + '==\n';
-		if (old < 20) ReStr = ReStr + '年齡調整：從STR、SIZ中減去' + Debuff + '點\n（請自行手動選擇計算）。\n將EDU減去5點。LUK可擲兩次取高。';
+		if (old < 20) ReStr = ReStr + '年齡調整：從STR、SIZ擇一減去' + Debuff + '點\n（請自行手動選擇計算）。\n將EDU減去5點。LUK可擲兩次取高。';
 		else
 		if (old >= 40) ReStr = ReStr + '年齡調整：從STR、CON或DEX中「總共」減去' + Debuff + '點\n（請自行手動選擇計算）。\n將APP減去' + AppDebuff + '點。可做' + EDUinc + '次EDU的成長擲骰。';
 		else ReStr = ReStr + '年齡調整：可做' + EDUinc + '次EDU的成長擲骰。';
 		ReStr = ReStr + '\n==';
-
-		// STR
-		ReStr = ReStr + '\n\nＳＴＲ：' + DiceCal('3d6*5');
-		if (old >= 40) ReStr = ReStr + ' ← 這三項自選共減' + Debuff + '點';
-		if (old < 20) ReStr = ReStr + ' ← 這兩項擇一減' + Debuff + '點';
+		if (old >= 40) ReStr = ReStr + '\n（以下箭號三項，自選共減' + Debuff + '點。）';
+		if (old < 20) ReStr = ReStr + '\n（以下箭號兩項，擇一減去' + Debuff + '點。）';
+		ReStr = ReStr + '\nＳＴＲ：' + DiceCal('3d6*5');
+		if (old >= 40) ReStr = ReStr + ' ← 共減' + Debuff;
+		if (old < 20) ReStr = ReStr + ' ←擇一減' + Debuff;
 
 		// CON
 		ReStr = ReStr + '\nＣＯＮ：' + DiceCal('3d6*5');
-		if (old >= 40) ReStr = ReStr + ' ← 這三項自選共減' + Debuff + '點';
+		if (old >= 40) ReStr = ReStr + ' ← 共減' + Debuff;
 
 		// DEX
 		ReStr = ReStr + '\nＤＥＸ：' + DiceCal('3d6*5');
-		if (old >= 40) ReStr = ReStr + ' ← 這三項自選共減' + Debuff + '點';
+		if (old >= 40) ReStr = ReStr + ' ← 共減' + Debuff;
 
 		// APP
 		if (old >= 40) ReStr = ReStr + '\nＡＰＰ：' + DiceCal('3d6*5-' + AppDebuff);
@@ -483,7 +483,7 @@ function CoC7th(inputStr) {
 
 		// SIZ
 		ReStr = ReStr + '\nＳＩＺ：' + DiceCal('(2d6+6)*5');
-		if (old < 20) ReStr = ReStr + ' ← 這兩項擇一減' + Debuff + '點';
+		if (old < 20) ReStr = ReStr + ' ←擇一減' + Debuff;
 
 		// INT
 		ReStr = ReStr + '\nＩＮＴ：' + DiceCal('(2d6+6)*5');
@@ -504,7 +504,7 @@ function CoC7th(inputStr) {
 
 				if (EDURoll > tempEDU) {
 					let EDUplus = Dice(10);
-					ReStr = ReStr + ' → 成功成長' + EDUplus + '點';
+					ReStr = ReStr + ' → 成長' + EDUplus + '點';
 					tempEDU = tempEDU + EDUplus;
 				} else {
 					ReStr = ReStr + ' → 沒有成長';
@@ -516,8 +516,8 @@ function CoC7th(inputStr) {
 		ReStr = ReStr + '\n==';
 
 		// LUK
-		ReStr = ReStr + '\n\nLUK：' + DiceCal('3d6*5');
-		if (old < 20) ReStr = ReStr + '\nLUK額外加骰：' + DiceCal('3D6*5');
+		ReStr = ReStr + '\nＬＵＫ：' + DiceCal('3d6*5');
+		if (old < 20) ReStr = ReStr + '\nＬＵＫ加骰：' + DiceCal('3D6*5');
 
 		return ReStr;
 	}
@@ -1079,6 +1079,9 @@ function randomBirdReply(inputStr) { //軒哥
 		'Magic！',
 		'哩金變態',
 		'真是任性(?',
+		'是孔明的陷阱！',
+		'是洋蔥 我加了洋蔥',
+		'燃燒吧我的小宇宙',
 	];
 	return rplyArr[Math.floor((Math.random() * (rplyArr.length)) + 0)];
 }
@@ -1109,6 +1112,7 @@ function randomYabasoReply(inputStr) {
 		'登愣',
 		'耶欸～<3',
 		'想廢廢的',
+		'拜託我聖母欸',
 	];
 
 	if (inputStr.match('家訪') != null) return 'ㄉㄅㄑ';

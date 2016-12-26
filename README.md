@@ -1,4 +1,4 @@
-TarotLineBot v0.6.1
+TarotLineBot v0.6.2
 ==================
 
 這是一個 LINE 專用的自動占卜 & TRPG 擲骰機器人，支援如下功能：
