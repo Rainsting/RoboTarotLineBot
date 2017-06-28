@@ -1,5 +1,12 @@
 Release Note
 ==================
+* 0.7.0 - 2017.06.28
+1. Fix bug for creating character card judgement error.
+2. Add new feature: PbtA dice rolling.
+3. Add new feature: Ask fortune function.
+4. Add new feature: D20 rolling divination.
+
+
 * 0.6.2 - 2016.12.26
 1. Update character maker content.
 2. Update friend's content.

@@ -118,13 +118,35 @@ function parseInput(rplyToken, inputStr) {
 	// 丟杯 cup 指令開始於此
 	else
 	// if (inputStr.match('cup') != null) {
-	if (inputStr.toLowerCase().match(/^cup/) || inputStr.match('杯杯')) {
+	if (trigger.toLowerCase().match(/^cup/) || trigger.match('杯杯')) {
 		let cuptext = null;
 		if (mainMsg[1] != undefined) {
 			if (mainMsg[1] == '說明') return displayUsage(4);
 			cuptext = mainMsg[1];
 		}
-		return NormalDrawCup(inputStr, cuptext);
+		return NormalDrawCup(trigger, cuptext);
+	}
+
+	// 運勢指令開始於此
+	else
+	if (trigger.toLowerCase().match(/^fortune/) || trigger.match('運勢')) {
+		let fortunetext = null;
+		if (mainMsg[1] != undefined) {
+			if (mainMsg[1] == '說明') return displayUsage(8);
+			fortunetext = mainMsg[1];
+		}
+		return Fortune(trigger, fortunetext);
+	}
+
+	// 20面骰占卜指令開始於此
+	else
+	if (trigger.toLowerCase().match(/^dice/) || trigger.match('骰骰')) {
+		let dicecup = null;
+		if (mainMsg[1] != undefined) {
+			if (mainMsg[1] == '說明') return displayUsage(9);
+			dicecup = mainMsg[1];
+		}
+		return Dice20forCup(trigger, dicecup);
 	}
 
 	// tarot 指令
@@ -204,6 +226,11 @@ function parseInput(rplyToken, inputStr) {
 	else
 	if (inputStr.toLowerCase().match(/^cc/) != null)
 		return CoC7th(inputStr.toLowerCase());
+
+	//PbtA判定在此
+	else
+	if (inputStr.toLowerCase().match(/^pb/)!= null) 
+		return pbta(inputStr.toLowerCase());
 	
 	else
 	// 這裡的正規表達式，會把非英文判斷檔掉，所以要放這邊，前面的關鍵字才不會出問題 
@@ -215,6 +242,56 @@ function parseInput(rplyToken, inputStr) {
 	// if (trigger != 'roll') return null;
 
 }
+
+////////////////////////////////////////
+//////////////// PbtA
+////////////////////////////////////////
+function pbta(inputStr){
+
+	if (inputStr.toLowerCase().match('說明') != null)
+		return displayUsage(7);
+  
+	let input = inputStr.toLowerCase().split(' ',2)[0];
+
+	//如果只有打pb兩個字，直接骰
+	if ( parseInt(input.toLowerCase().length) == 2)
+	{
+		let CalStr = RollDice('2d6');
+	
+		if (eval(CalStr.toString()) >= 10){      
+			return CalStr + '=' + eval(CalStr.toString()) + '，成功！';
+		}
+		else if (eval(CalStr.toString()) <= 6){
+			return CalStr + '=' + eval(CalStr.toString()) + '，失敗。';
+		}    
+		else {
+		return CalStr + '=' + eval(CalStr.toString()) + '，部分成功。';
+		}
+	//DiceCal('2d6');    
+	//RollDice('2d6')
+	
+	}
+  
+	//先去掉誤判
+	if (input.toLowerCase().match(/^pb(?!\+)/) != null && input.toLowerCase().match(/^pb(?!\-)/) != null){
+		return undefined;
+	}
+  
+	//有加值的PBTA擲骰
+	else{
+		let CalStr = RollDice('2d6') + input.split('b',2)[1];
+		if (eval(CalStr.toString()) >= 10){      
+			return CalStr + '=' + eval(CalStr.toString()) + '，成功！';
+	}
+	else if (eval(CalStr.toString()) <= 6){
+		return CalStr + '=' + eval(CalStr.toString()) + '，失敗。';
+	}    
+	else {
+		return CalStr + '=' + eval(CalStr.toString()) + '，部分成功。';
+	}
+  }
+}
+
 
 ////////////////////////////////////////
 //////////////// nechronica (NC)
@@ -489,7 +566,7 @@ function CoC7th(inputStr) {
 		ReStr = ReStr + '\nＩＮＴ：' + DiceCal('(2d6+6)*5');
 
 		// EDU
-		if (old < 20) ReStr = ReStr + '\nＥＤＵ：' + DiceCal('3d6*5-5');
+		if (old < 20) ReStr = ReStr + '\nＥＤＵ：' + DiceCal('(2d6+6)*5-5');
 		else {
 			let firstEDU = '(' + RollDice('2d6') + '+6)*5';
 			ReStr = ReStr + '\n==';
@@ -580,7 +657,7 @@ function CoC7th(inputStr) {
 	else
 	if (finalRoll == 100) ReStr = ReStr + finalRoll + ' → 啊！大失敗！';
 	else
-	if (finalRoll <= 99 && finalRoll >= 95 && chack < 50) ReStr = ReStr + finalRoll + ' → 啊！大失敗！';
+	if (finalRoll <= 99 && finalRoll > 95 && chack < 50) ReStr = ReStr + finalRoll + ' → 啊！大失敗！';
 	else
 	if (finalRoll <= chack / 5) ReStr = ReStr + finalRoll + ' → 極限成功';
 	else
@@ -590,7 +667,7 @@ function CoC7th(inputStr) {
 	else ReStr = ReStr + finalRoll + ' → 失敗';
 
 	//浮動大失敗運算
-	if (finalRoll <= 99 && finalRoll >= 95 && chack >= 50) {
+	if (finalRoll <= 99 && finalRoll > 95 && chack >= 50) {
 		if (chack / 2 < 50) ReStr = ReStr + '\n（若要求困難成功則為大失敗）';
 		else
 		if (chack / 5 < 50) ReStr = ReStr + '\n（若要求極限成功則為大失敗）';
@@ -717,6 +794,52 @@ function NormalDrawCup(inputStr, text) {
 	return returnStr;
 }
 
+////////////////////////////////////////
+//////////////// 運勢
+////////////////////////////////////////
+function Fortune(inputStr, text) {
+	let returnStr = '';
+
+	let dice = FortuneCup(100);
+
+	if (dice == 1) returnStr = '超大吉';
+	else if	(dice > 1 && dice <= 5) returnStr = '大吉';
+	else if	(dice > 5 && dice <= 20) returnStr = '吉';
+	else if	(dice > 20 && dice <= 35) returnStr = '小吉';
+	else if	(dice > 35 && dice <= 65) returnStr = '普通';
+	else if	(dice > 65 && dice <= 80) returnStr = '小兇';
+	else if	(dice > 80 && dice <= 95) returnStr = '兇';
+	else if	(dice > 95 && dice <= 99) returnStr = '大兇';
+	else if	(dice == 100) returnStr = '超大兇';
+	else returnStr = '命運是靠自己掌控的';
+
+	if (text != null) {
+		returnStr += ' ; ' + text;
+	}
+
+	return returnStr;
+}
+
+////////////////////////////////////////
+//////////////// 20面骰占卜
+////////////////////////////////////////
+function Dice20forCup(inputStr, text) {
+	let returnStr = '';
+
+	let dice = DiceCup(20);
+
+	returnStr = '占卜骰：' + dice;
+
+	/* Special case */
+	if (dice == 4) returnStr += ' ;肯定';
+	else if (dice == 14) returnStr += ' ;否定';
+
+	if (text != null) {
+		returnStr += ' ; ' + text;
+	}	
+
+	return returnStr;
+}
 
 ////////////////////////////////////////
 //////////////// Tarot
@@ -937,7 +1060,15 @@ function Tarot(diceSided) {
 }
 
 function Dice(diceSided) {
-	return Math.floor((Math.random() * diceSided) + 1)
+	return Math.floor((Math.random() * diceSided) + 1) //普通擲骰
+}
+
+function FortuneCup(diceSided) {
+	return Math.floor((Math.random() * diceSided) + 1) //運勢
+}
+
+function DiceCup(diceSided) {
+	return Math.floor((Math.random() * diceSided) + 1) //20面擲骰占卜
 }
 
 ////////////////////////////////////////
@@ -966,13 +1097,23 @@ function displayUsage(usage) {
 \n → 4NC+2 (問題) \
 \n → NM (對象)  可判定依戀 \
 \n \
+\nPbtA 擲骰範例: \
+\n → pb \
+\n → pb+2 \
+\n \
 \n塔羅範例: \
 \n → tarot daily/每日 (問題) \
 \n → tarot time/時間 (問題) \
 \n → tarot cross/大十字 (問題) \
 \n \
 \n擲筊範例: \
-\n → cup (問題) \
+\n → cup/杯杯 (問題) \
+\n \
+\n運勢範例: \
+\n → 運勢 (問題) \
+\n \
+\n20面占卜骰範例: \
+\n → dice/骰骰 (問題) \
 \n \
 \n猜拳範例: \
 \n → 猜拳 剪刀/石頭/布 \
@@ -1006,7 +1147,7 @@ CoC 擲骰範例: \
 	if (usage == 4)
 		returnStr = '\
 常見的擲筊 \
-\n請用 丟杯/擲筊/cup (問題) \
+\n請用 cup/杯杯 (問題) \
 \n會出現聖杯、笑杯、蓋杯、沒杯與立杯等結果';
 
 	if (usage == 5)
@@ -1020,6 +1161,28 @@ CoC 擲骰範例: \
 猜拳 \
 \n請用 猜拳 剪刀/石頭/布 來出拳\
 \n好孩子不可以亂出喔！';
+
+	if (usage == 7)
+		returnStr = '\
+支援 PbtA 擲骰囉 \
+\n請用基本 pb/pb+2 (問題) 之類的來丟\
+\n大小寫都可以';
+
+	if (usage == 8)
+		returnStr = '\
+常見的運勢占卜 \
+\n請用 fortune/運勢 (問題) \
+\n會出現超大吉、大吉、吉、小吉、普通、小兇、兇、大凶、超大兇等結果';
+
+	if (usage == 9)
+		returnStr = '\
+20面占卜骰占卜 \
+\n請用 dice/骰骰 (問題) \
+\n1-10 為否定，數字越小越否定 \
+\n11-20 為肯定，數字越大越肯定 \
+\n特殊案例： \
+\n4 為肯定 \
+\n14 為否定';
 
 	return returnStr;
 }
@@ -1082,6 +1245,18 @@ function randomBirdReply(inputStr) { //軒哥
 		'是孔明的陷阱！',
 		'是洋蔥 我加了洋蔥',
 		'燃燒吧我的小宇宙',
+		'不...不想上班',
+		'這種話你說的出口',
+		'救命啊……',
+		'雜種！',
+		'我也不知道我在幹嘛(?',
+		'燃燒吧我的肝',
+		'認命吧(？',
+		'可惡，想廢',
+		'可以的可以的(?',
+		'可以，這很星爆',
+		'我是鋼彈',
+		'媽的(?',
 	];
 	return rplyArr[Math.floor((Math.random() * (rplyArr.length)) + 0)];
 }
